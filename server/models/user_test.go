@@ -61,3 +61,23 @@ func Test_User_ScenarioCreate_ok(t *testing.T) {
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	assert.Nil(t, err)
 }
+
+func Test_User_ScenarioHashPassword_notOk(t *testing.T) {
+	u := User{}
+	err := validation.ValidateByScenario(constants.ScenarioHashPassword, u)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Password"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordSalt"), v["PasswordSalt"][0].Message)
+}
+
+func Test_User_ScenarioHashPassword_Ok(t *testing.T) {
+	u := User{
+		Password: "12345678lT*",
+	}
+	u.encodePassword()
+	err := validation.ValidateByScenario(constants.ScenarioHashPassword, u)
+	assert.Nil(t, err)
+}

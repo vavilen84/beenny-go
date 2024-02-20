@@ -51,18 +51,18 @@ func (User) GetValidationRules() interface{} {
 			"EmailTwoFaCode": "required",
 		},
 		constants.ScenarioHashPassword: validation.FieldRules{
-			"Password":     "min=8,max=5000,required",
-			"PasswordSalt": "min=3,max=5000,required",
+			"Password":     "max=5000,required",
+			"PasswordSalt": "max=5000,required",
 		},
 		constants.ScenarioForgotPassword: validation.FieldRules{
-			"PasswordResetToken":         "min=3,max=5000,required",
+			"PasswordResetToken":         "max=5000,required",
 			"PasswordResetTokenExpireAt": "required,customFutureValidator",
 		},
 		constants.ScenarioChangePassword: validation.FieldRules{
-			"Password": "min=8,max=5000,required,customPasswordValidator",
+			"Password": "max=5000,required,customPasswordValidator",
 		},
 		constants.ScenarioResetPassword: validation.FieldRules{
-			"Password": "min=8,max=5000,required,customPasswordValidator",
+			"Password": "max=5000,required,customPasswordValidator",
 		},
 		constants.ScenarioVerifyEmail: validation.FieldRules{
 			"IsEmailVerified": "eq=true",
