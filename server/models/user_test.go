@@ -28,7 +28,6 @@ func Test_User_ScenarioCreate_notOk(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	fmt.Printf("%v", v)
 	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), v["Email"][0].Message)
 	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "FirstName"), v["FirstName"][0].Message)
 	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "LastName"), v["LastName"][0].Message)
