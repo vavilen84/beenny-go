@@ -32,6 +32,12 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
+	if dtoModel.Password != dtoModel.ConfirmPassword {
+		err = errors.New("Passwords don't match")
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
+		return
+	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
@@ -47,10 +53,17 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	emailVerificationToken := helpers.GenerateRandomString(6)
 	u = &models.User{
+		FirstName:       dtoModel.FirstName,
+		LastName:        dtoModel.LastName,
 		Email:           dtoModel.Email,
+		CurrentCountry:  dtoModel.CurrentCountry,
+		CountryOfBirth:  dtoModel.CountryOfBirth,
+		Gender:          dtoModel.Gender,
+		Timezone:        dtoModel.Timezone,
+		Birthday:        dtoModel.Birthday,
 		Password:        dtoModel.Password,
-		Nickname:        dtoModel.Nickname,
 		Role:            constants.RoleUser,
+		Photo:           dtoModel.Photo,
 		IsEmailVerified: false,
 		EmailTwoFaCode:  emailVerificationToken,
 	}
