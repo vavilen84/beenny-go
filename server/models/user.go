@@ -69,7 +69,7 @@ func (User) GetValidationRules() interface{} {
 			"EmailTwoFaCode":  "eq=",
 		},
 		constants.ScenarioLoginTwoFaStepOne: validation.FieldRules{
-			"EmailTwoFaCode": "min=6,max=6,required",
+			"EmailTwoFaCode": "required,min=6,max=6",
 		},
 	}
 }

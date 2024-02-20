@@ -158,3 +158,23 @@ func Test_User_ScenarioVerifyEmail_Ok(t *testing.T) {
 	err := validation.ValidateByScenario(constants.ScenarioVerifyEmail, u)
 	assert.Nil(t, err)
 }
+
+func Test_User_ScenarioLoginTwoFaStepOne_notOk(t *testing.T) {
+	u := User{
+		EmailTwoFaCode: "",
+	}
+	err := validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, u)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "EmailTwoFaCode"), v["EmailTwoFaCode"][0].Message)
+}
+
+func Test_User_ScenarioLoginTwoFaStepOne_Ok(t *testing.T) {
+	u := User{
+		EmailTwoFaCode: "123456",
+	}
+	err := validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, u)
+	assert.Nil(t, err)
+}
