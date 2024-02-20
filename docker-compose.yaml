@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+
+  db:
+    container_name: 'nft-project-db'
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./docker/db/dbdata:/var/lib/mysql
+
+  pma:
+    container_name: 'nft-project-pma'
+    restart:
+      always
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db
+
+#  frontend:
+#    container_name: 'nft-project-frontend'
+#    build:
+#      context: .
+#      dockerfile: ./docker/frontend/Dockerfile
+#    ports:
+#      - 9300:9000
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - .env
+
+#  redis:
+#    container_name: 'nft-project-redis'
+#    image: redis:5.0.9-alpine
+#    volumes:
+#      - ./docker/redis:/data
+#    ports:
+#      - "6379:6379"
+#    expose:
+#      - 6379
+
+#  server:
+#    container_name: 'nft-project-server'
+#    build:
+#      dockerfile: ./docker/server/Dockerfile
+#      context: .
+#    ports:
+#      - "8000:8000"
+#    expose:
+#      - 8050
+#    depends_on:
+#      - db
+#      - redis
+#    env_file:
+#      - .env
+#    volumes:
+#      - ./:/app
