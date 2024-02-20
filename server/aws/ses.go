@@ -30,8 +30,7 @@ func SendResetPasswordEmail(recipient, token string) error {
 }
 
 func SendEmailVerificationMail(recipient, token string) error {
-	// TODO: replace with real domain
-	link := fmt.Sprintf(
+	body := fmt.Sprintf(
 		constants.EmailVerificationHtmlBodyFormat,
 		os.Getenv("DOMAIN")+"/verify-email&token="+token,
 	)
@@ -39,7 +38,7 @@ func SendEmailVerificationMail(recipient, token string) error {
 		recipient,
 		constants.NoReplySenderEmail,
 		constants.EmailVerificationSubject,
-		link,
+		body,
 	)
 }
 
