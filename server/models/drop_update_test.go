@@ -51,15 +51,15 @@ func Test_DropUpdate_notOk_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "CollectionName"), v["CollectionName"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "Blockchain"), v["Blockchain"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "Drop", "PublicSaleDateTime"), v["PublicSaleDateTime"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "TimeZone"), v["TimeZone"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "PublicSalePrice"), v["PublicSalePrice"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "TotalSupply"), v["TotalSupply"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "BillingPlan"), v["BillingPlan"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "Status"), v["Status"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Drop", "UserID"), v["UserID"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "CollectionName"), v["CollectionName"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Blockchain"), v["Blockchain"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "PublicSaleDateTime"), v["PublicSaleDateTime"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "TimeZone"), v["TimeZone"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PublicSalePrice"), v["PublicSalePrice"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "TotalSupply"), v["TotalSupply"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "BillingPlan"), v["BillingPlan"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Status"), v["Status"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "UserID"), v["UserID"][0].Message)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)

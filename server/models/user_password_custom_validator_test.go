@@ -22,7 +22,7 @@ func Test_PasswordValidation_min(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "User", "Password", "8"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Password", "8"), v["Password"][0].Message)
 }
 
 func Test_PasswordValidation_customValidation_1(t *testing.T) {
@@ -38,7 +38,7 @@ func Test_PasswordValidation_customValidation_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
 }
 
 func Test_PasswordValidation_customValidation_2(t *testing.T) {
@@ -54,7 +54,7 @@ func Test_PasswordValidation_customValidation_2(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
 }
 
 func Test_PasswordValidation_customValidation_3(t *testing.T) {
@@ -70,7 +70,7 @@ func Test_PasswordValidation_customValidation_3(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
 }
 
 func Test_PasswordValidation_customValidation_4(t *testing.T) {

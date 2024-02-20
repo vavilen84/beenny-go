@@ -36,8 +36,8 @@ func TestUser_SetUserEmailVerified(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "User", "IsEmailVerified", "true"), v["IsEmailVerified"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "User", "EmailTwoFaCode", ""), v["EmailTwoFaCode"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "IsEmailVerified", "true"), v["IsEmailVerified"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "EmailTwoFaCode", ""), v["EmailTwoFaCode"][0].Message)
 
 	// no error
 

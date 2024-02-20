@@ -32,8 +32,8 @@ func TestInsertJWTInfo(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "JWTInfo", "UserId"), v["UserId"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "JWTInfo", "ExpiresAt"), v["ExpiresAt"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "UserId"), v["UserId"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "ExpiresAt"), v["ExpiresAt"][0].Message)
 
 	// Calculate the duration of 24 hours
 	duration, err := time.ParseDuration("-24h")
@@ -54,7 +54,7 @@ func TestInsertJWTInfo(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "JWTInfo", "ExpiresAt"), v["ExpiresAt"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "ExpiresAt"), v["ExpiresAt"][0].Message)
 
 	// Calculate the duration of 24 hours
 	duration, err = time.ParseDuration("24h")

@@ -11,29 +11,43 @@ import (
 )
 
 type User struct {
-	Id                         int        `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
-	Email                      string     `json:"email" column:"email"`
-	Nickname                   string     `json:"nickname" column:"nickname"`
-	Password                   string     `json:"password" column:"password"`
-	PasswordSalt               string     `column:"password_salt"`
-	PasswordResetToken         string     `column:"password_reset_token"`
-	PasswordResetTokenExpireAt *time.Time `column:"password_reset_token_expire_at"`
-	Role                       int        `json:"role" column:"role"`
-	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
-	EmailTwoFaCode             string     `json:"email_two_fa_code" column:"email_two_fa_code"`
+	Id                         int    `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
+	FirstName                  string `json:"firstName"`
+	LastName                   string `json:"lastName"`
+	Email                      string `json:"email"`
+	Password                   string `json:"password"`
+	PasswordSalt               string
+	PasswordResetToken         string
+	PasswordResetTokenExpireAt *time.Time
+	Role                       int `json:"role"`
+	IsEmailVerified            bool
+	CurrentCountry             string `json:"currentCountry"`
+	CountryOfBirth             string `json:"countryOfBirth"`
+	Gender                     string `json:"gender"`
+	Timezone                   string `json:"timezone"`
+	Birthday                   string `json:"birthday"`
+	Photo                      string `json:"photo"`
+	EmailTwoFaCode             string `json:"emailTwoFaCode"`
 }
 
 func (m *User) TableName() string {
-	return "user"
+	return "users"
 }
 
 func (User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			"Email":          "min=3,max=255,email,required",
-			"Nickname":       "min=3,max=255,required",
-			"Password":       "min=8,max=5000,required,customPasswordValidator",
-			"Role":           "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"FirstName":      "max=255,required",
+			"LastName":       "max=255,required",
+			"Email":          "max=255,email,required",
+			"CurrentCountry": "max=2,required",
+			"CountryOfBirth": "max=2,required",
+			"Gender":         "max=10,required",
+			"Timezone":       "max=255,required",
+			"Birthday":       "required",
+			"Photo":          "max=255,required",
+			"Password":       "max=255,required,customPasswordValidator",
+			"Role":           "required,gt=0,lt=2",
 			"EmailTwoFaCode": "required",
 		},
 		constants.ScenarioHashPassword: validation.FieldRules{

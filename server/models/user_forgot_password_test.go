@@ -48,8 +48,8 @@ func TestUser_ForgotPassword_passwordValidation(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "User", "PasswordResetToken", "3"), v["PasswordResetToken"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "User", "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "PasswordResetToken", "3"), v["PasswordResetToken"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
 
 	// should be error
 	m = User{
@@ -60,7 +60,7 @@ func TestUser_ForgotPassword_passwordValidation(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
 
 	// Calculate the duration of 24 hours
 	duration, err = time.ParseDuration("24h")

@@ -33,7 +33,7 @@ func TestUser_ChangePassword_passwordValidation(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "User", "Password", "8"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Password", "8"), v["Password"][0].Message)
 
 	// should be error
 	m = User{
@@ -44,7 +44,7 @@ func TestUser_ChangePassword_passwordValidation(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
 
 	mock.ExpectExec("UPDATE user").WillReturnResult(sqlmock.NewResult(1, 1))
 
