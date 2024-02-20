@@ -135,3 +135,26 @@ func Test_User_ScenarioResetPassword_Ok(t *testing.T) {
 	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
 	assert.Nil(t, err)
 }
+
+func Test_User_ScenarioVerifyEmail_notOk(t *testing.T) {
+	u := User{
+		IsEmailVerified: false,
+		EmailTwoFaCode:  "123456",
+	}
+	err := validation.ValidateByScenario(constants.ScenarioVerifyEmail, u)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "IsEmailVerified", "true"), v["IsEmailVerified"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "EmailTwoFaCode", ""), v["EmailTwoFaCode"][0].Message)
+}
+
+func Test_User_ScenarioVerifyEmail_Ok(t *testing.T) {
+	u := User{
+		IsEmailVerified: true,
+		EmailTwoFaCode:  "",
+	}
+	err := validation.ValidateByScenario(constants.ScenarioVerifyEmail, u)
+	assert.Nil(t, err)
+}
