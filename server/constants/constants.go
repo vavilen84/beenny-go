@@ -15,15 +15,14 @@ const (
 	RoleUser  = 1
 	RoleAdmin = 2
 
-	FreeBillingPlan     = 1
-	StandardBillingPlan = 2
-	ProBillingPlan      = 3
+	GenderMale   = "male"
+	GenderFemale = "female"
+	GenderOther  = "other"
 
 	// email
-	// TODO: replace with real domain
-	TwoFaLoginSubject               = "Benny.com: 2FA login verification"
-	EmailVerificationSubject        = "Benny.com: email verification"
-	ResetPasswordSubject            = "Benny.com: reset forgotten password"
+	TwoFaLoginSubject               = "beenny.com: 2FA login verification"
+	EmailVerificationSubject        = "beenny.com: email verification"
+	ResetPasswordSubject            = "beenny.com: reset forgotten password"
 	ResetPasswordHtmlBodyFormat     = "In order to reset your password, please forward this link %s"
 	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link <a href='%s'>Verify Email</a>"
 	LoginTwoFaCodeHtmlBodyFormat    = "Please, forward this link in order to login <a href='%s'>Login</a>"
@@ -56,7 +55,7 @@ const (
 	RequiredErrorMsg                   = "'%s' is required"
 	MinValueErrorMsg                   = "'%s' min value is %s"
 	MaxValueErrorMsg                   = "'%s' max value is %s"
-	EmailErrorMsg                      = "email is not valid"
+	EmailErrorMsg                      = "'Email' is not valid"
 	GreaterThanTagErrorMsg             = "value should be greater than %s"
 	LowerThanTagErrorMsg               = "value should be lower than %s"
 	CustomPasswordValidatorTagErrorMsg = "password must have: 1 small letter, 1 big letter, 1 special symbol, 1 digit and be at least 8 symbols long"
