@@ -18,7 +18,7 @@ func Test_DTO_ForgotPassword_notOk_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "ForgotPassword", "Email", "3"), v["Email"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Email", "3"), v["Email"][0].Message)
 }
 
 func Test_DTO_ForgotPassword_notOk_2(t *testing.T) {
@@ -30,7 +30,7 @@ func Test_DTO_ForgotPassword_notOk_2(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg, "ForgotPassword"), v["Email"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), v["Email"][0].Message)
 }
 
 func Test_DTO_ForgotPassword_ok(t *testing.T) {

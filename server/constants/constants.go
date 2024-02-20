@@ -51,15 +51,15 @@ const (
 	CustomPasswordValidatorTag = "customPasswordValidator"
 
 	// validation error messages
-	FutureErrorMsg                     = "%s resource: '%s' should be in the future"
-	EqErrorMsg                         = "%s resource: '%s' should be %s"
-	RequiredErrorMsg                   = "%s resource: '%s' is required"
-	MinValueErrorMsg                   = "%s resource: '%s' min value is %s"
-	MaxValueErrorMsg                   = "%s resource: '%s' max value is %s"
-	EmailErrorMsg                      = "%s resource: email is not valid"
-	GreaterThanTagErrorMsg             = "%s resource: value should be greater than %s"
-	LowerThanTagErrorMsg               = "%s resource: value should be lower than %s"
-	CustomPasswordValidatorTagErrorMsg = "%s resource: password must have: 1 small letter, 1 big letter, 1 special symbol"
+	FutureErrorMsg                     = "'%s' should be in the future"
+	EqErrorMsg                         = "'%s' should be %s"
+	RequiredErrorMsg                   = "'%s' is required"
+	MinValueErrorMsg                   = "'%s' min value is %s"
+	MaxValueErrorMsg                   = "'%s' max value is %s"
+	EmailErrorMsg                      = "email is not valid"
+	GreaterThanTagErrorMsg             = "value should be greater than %s"
+	LowerThanTagErrorMsg               = "value should be lower than %s"
+	CustomPasswordValidatorTagErrorMsg = "password must have: 1 small letter, 1 big letter, 1 special symbol, 1 digit and be at least 8 symbols long"
 
 	// Server
 	DefaultWriteTimout  = 60 * time.Second

@@ -19,8 +19,8 @@ func Test_DTO_TwoFaLoginStepOne_notOk_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "TwoFaLoginStepOne", "Email", "3"), v["Email"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "TwoFaLoginStepOne", "Password", "8"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Email", "3"), v["Email"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Password", "8"), v["Password"][0].Message)
 }
 
 func Test_DTO_TwoFaLoginStepOne_notOk_2(t *testing.T) {
@@ -33,8 +33,8 @@ func Test_DTO_TwoFaLoginStepOne_notOk_2(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg, "TwoFaLoginStepOne"), v["Email"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "TwoFaLoginStepOne"), v["Password"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), v["Email"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
 }
 
 func Test_DTO_TwoFaLoginStepOne_ok(t *testing.T) {

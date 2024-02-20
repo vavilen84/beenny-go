@@ -19,8 +19,8 @@ func Test_DTO_resetPassword_notOk_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "ResetPassword", "Token", "6"), v["Token"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "ResetPassword", "NewPassword", "8"), v["NewPassword"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Token", "6"), v["Token"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "NewPassword", "8"), v["NewPassword"][0].Message)
 }
 
 func Test_DTO_resetPassword_notOk_2(t *testing.T) {
@@ -33,7 +33,7 @@ func Test_DTO_resetPassword_notOk_2(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "ResetPassword"), v["NewPassword"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["NewPassword"][0].Message)
 }
 
 func Test_DTO_resetPassword_ok(t *testing.T) {

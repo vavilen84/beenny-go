@@ -18,7 +18,7 @@ func Test_DTO_TwoFaLoginStepTwo_notOk_1(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "TwoFaLoginStepTwo", "EmailTwoFaCode", "6"), v["EmailTwoFaCode"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "EmailTwoFaCode", "6"), v["EmailTwoFaCode"][0].Message)
 }
 
 func Test_DTO_TwoFaLoginStepTwo_notOk_2(t *testing.T) {
@@ -30,7 +30,7 @@ func Test_DTO_TwoFaLoginStepTwo_notOk_2(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MaxValueErrorMsg, "TwoFaLoginStepTwo", "EmailTwoFaCode", "6"), v["EmailTwoFaCode"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.MaxValueErrorMsg, "EmailTwoFaCode", "6"), v["EmailTwoFaCode"][0].Message)
 }
 
 func Test_DTO_TwoFaLoginStepTwo_ok(t *testing.T) {

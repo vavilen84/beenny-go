@@ -5,12 +5,22 @@ import (
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
+	"time"
 )
 
 type Register struct {
-	Nickname string `json:"nickname"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	FirstName       string    `json:"firstName"`
+	LastName        string    `json:"lastName"`
+	Email           string    `json:"email"`
+	CurrentCountry  string    `json:"currentCountry"`
+	CountryOfBirth  string    `json:"countryOfBirth"`
+	Gender          string    `json:"gender"`
+	Timezone        string    `json:"timezone"`
+	Birthday        time.Time `json:"birthday"`
+	AgreeTerms      bool      `json:"agreeTerms"`
+	Password        string    `json:"password"`
+	Photo           string    `json:"photo"`
+	ConfirmPassword string    `json:"confirmPassword"`
 }
 
 func (Register) GetValidator() interface{} {
@@ -20,15 +30,25 @@ func (Register) GetValidator() interface{} {
 		helpers.LogError(err)
 		return nil
 	}
+
 	return v
 }
 
 func (Register) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioRegister: validation.FieldRules{
-			"Nickname": "min=3,max=255,required",
-			"Email":    "min=3,max=255,email,required",
-			"Password": "min=8,max=255,required,customPasswordValidator",
+			"FirstName":       "max=255,required",
+			"LastName":        "max=255,required",
+			"Email":           "max=255,email,required",
+			"CurrentCountry":  "max=2,required",
+			"CountryOfBirth":  "min=2,max=2,required",
+			"Gender":          "max=10,required",
+			"Timezone":        "max=255,required",
+			"Birthday":        "required",
+			"AgreeTerms":      "required",
+			"Photo":           "max=255,required",
+			"Password":        "max=255,required,customPasswordValidator",
+			"ConfirmPassword": "max=255,required,customPasswordValidator",
 		},
 	}
 }
