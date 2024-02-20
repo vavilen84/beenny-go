@@ -42,7 +42,7 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 		}
 		return
 	}
-	u.SetForgotPasswordData()
+	token := u.SetForgotPasswordData()
 	err = models.ForgotPassword(db, u)
 	if err != nil {
 		helpers.LogError(err)

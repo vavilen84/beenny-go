@@ -225,11 +225,13 @@ func FindUserByResetPasswordToken(db *gorm.DB, token string) (*User, error) {
 	return &m, err
 }
 
-func (u *User) SetForgotPasswordData() {
+func (u *User) SetForgotPasswordData() string {
 	token := helpers.GenerateRandomString(32)
 	currentTime := time.Now()
 	oneHourLater := currentTime.Add(time.Hour)
 
 	u.PasswordResetToken = token
 	u.PasswordResetTokenExpireAt = &oneHourLater
+
+	return token
 }
