@@ -117,3 +117,21 @@ func Test_User_ScenarioChangePassword_Ok(t *testing.T) {
 	err := validation.ValidateByScenario(constants.ScenarioChangePassword, u)
 	assert.Nil(t, err)
 }
+
+func Test_User_ScenarioResetPassword_notOk(t *testing.T) {
+	u := User{}
+	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Password"), v["Password"][0].Message)
+}
+
+func Test_User_ScenarioResetPassword_Ok(t *testing.T) {
+	u := User{
+		Password: "12345678lT*",
+	}
+	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
+	assert.Nil(t, err)
+}
