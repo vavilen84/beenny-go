@@ -81,3 +81,21 @@ func Test_User_ScenarioHashPassword_Ok(t *testing.T) {
 	err := validation.ValidateByScenario(constants.ScenarioHashPassword, u)
 	assert.Nil(t, err)
 }
+
+func Test_User_ScenarioForgotPassword_notOk(t *testing.T) {
+	u := User{}
+	err := validation.ValidateByScenario(constants.ScenarioForgotPassword, u)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetToken"), v["PasswordResetToken"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
+}
+
+func Test_User_ScenarioForgotPassword_Ok(t *testing.T) {
+	u := User{}
+	u.SetForgotPasswordData()
+	err := validation.ValidateByScenario(constants.ScenarioForgotPassword, u)
+	assert.Nil(t, err)
+}

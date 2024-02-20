@@ -13,7 +13,6 @@ import (
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
 	"net/http"
-	"time"
 )
 
 func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Request) {
@@ -43,14 +42,7 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 		}
 		return
 	}
-
-	token := helpers.GenerateRandomString(32)
-	currentTime := time.Now()
-	oneHourLater := currentTime.Add(time.Hour)
-
-	u.PasswordResetToken = token
-	u.PasswordResetTokenExpireAt = &oneHourLater
-
+	u.SetForgotPasswordData()
 	err = models.ForgotPassword(db, u)
 	if err != nil {
 		helpers.LogError(err)
