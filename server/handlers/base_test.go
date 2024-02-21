@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/auth"
+	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/handlers"
 	"github.com/vavilen84/beenny-go/models"
@@ -73,9 +74,16 @@ func initApp() *httptest.Server {
 
 func registerUser(t *testing.T, ts *httptest.Server) {
 	body := dto.Register{
-		//Nickname: "test_" + helpers.GenerateRandomString(5),
-		Email:    registerUserEmail,
-		Password: registerUserPassword,
+		FirstName:      "John",
+		LastName:       "Dou",
+		CurrentCountry: "UA",
+		CountryOfBirth: "UA",
+		Gender:         constants.GenderMale,
+		Timezone:       "US/Arizona",
+		Birthday:       "1984-01-23",
+		Photo:          "/2024/01/23/s09d8fs09dfu.jpg",
+		Email:          registerUserEmail,
+		Password:       registerUserPassword,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
@@ -110,7 +118,6 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 
 	assert.Equal(t, registerResp.Status, http.StatusOK)
 	assert.Empty(t, registerResp.Data)
-	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
