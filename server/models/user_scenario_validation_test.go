@@ -6,20 +6,8 @@ import (
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/validation"
 	"log"
-	"strings"
 	"testing"
 )
-
-import "errors"
-
-type CustomMatcher struct{}
-
-func (c CustomMatcher) Match(expectedSQL, actualSQL string) error {
-	if !strings.Contains(actualSQL, expectedSQL) {
-		return errors.New("SQL doesnt match")
-	}
-	return nil
-}
 
 func Test_User_ScenarioCreate_notOk(t *testing.T) {
 	u := User{}
@@ -44,20 +32,7 @@ func Test_User_ScenarioCreate_notOk(t *testing.T) {
 }
 
 func Test_User_ScenarioCreate_ok(t *testing.T) {
-	u := User{
-		FirstName:      "John",
-		LastName:       "Dou",
-		Email:          "email@example.com",
-		CurrentCountry: "UA",
-		CountryOfBirth: "UA",
-		Gender:         constants.GenderMale,
-		Timezone:       "US/Arizona",
-		Birthday:       "1984-01-23",
-		Password:       "12345678lT*",
-		Photo:          "/2024/01/23/s09d8fs09dfu.jpg",
-		Role:           constants.RoleUser,
-		EmailTwoFaCode: "123456",
-	}
+	u := GetTestValidUserModel()
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	assert.Nil(t, err)
 }

@@ -12,39 +12,24 @@ import (
 	"testing"
 )
 
-func TestUser_CreateScenario_emailValidation(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func TestUser_InsertUser_ok(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		panic(err)
 	}
 	defer db.Close()
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		SkipInitializeWithVersion: true,
-		Conn:                      db,
-	}), &gorm.Config{})
+	gormDB := GetMockDB(db)
 
-	// should be error
-	m := User{
-		Email: "not_valid_email",
-	}
+	sql := "INSERT INTO `users`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
+
+	m := GetTestValidUserModel()
 	err = InsertUser(gormDB, &m)
-	v, ok := err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
-	}
-	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), v["Email"][0].Message)
+	//sqlMock.ExpectCommit()
+	assert.Nil(t, err)
 
-	// no error
-	m.Email = "valid.email@example.com"
-	err = InsertUser(gormDB, &m)
-	v, ok = err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
-	}
-	_, ok = v["Email"]
-	assert.False(t, ok)
-
-	if err := mock.ExpectationsWereMet(); err != nil {
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }

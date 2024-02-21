@@ -9,7 +9,6 @@ import (
 	"github.com/vavilen84/nft-project/auth"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/handlers"
-	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/models"
 	"github.com/vavilen84/nft-project/store"
 	"gorm.io/gorm"
@@ -78,7 +77,7 @@ func initApp() *httptest.Server {
 
 func registerUser(t *testing.T, ts *httptest.Server) {
 	body := dto.Register{
-		Nickname: "test_" + helpers.GenerateRandomString(5),
+		//Nickname: "test_" + helpers.GenerateRandomString(5),
 		Email:    registerUserEmail,
 		Password: registerUserPassword,
 	}
