@@ -44,14 +44,29 @@ var AppCommands = []*cobra.Command{
 		},
 	},
 	&cobra.Command{
-		Use:  "migrate-up",
-		Args: cobra.ExactArgs(1),
+		Use: "migrate-up",
 		Run: func(cmd *cobra.Command, args []string) {
 			store.InitDB()
 			db := store.GetDB()
 			err := models.CreateMigrationsTableIfNotExists(db)
 			if err != nil {
 				log.Println(err)
+			}
+			err = models.MigrateUp(db)
+			if err != nil {
+				log.Println(err)
+			}
+		},
+	},
+	&cobra.Command{
+		Use: "migrate-test-db-up",
+		Run: func(cmd *cobra.Command, args []string) {
+			store.InitTestDB()
+			db := store.GetDB()
+			err := models.CreateMigrationsTableIfNotExists(db)
+			if err != nil {
+				log.Println(err)
+				panic(err)
 			}
 			err = models.MigrateUp(db)
 			if err != nil {
