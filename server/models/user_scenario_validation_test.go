@@ -52,7 +52,7 @@ func Test_User_ScenarioHashPassword_Ok(t *testing.T) {
 	u := User{
 		Password: "12345678lT*",
 	}
-	u.encodePassword()
+	u.EncodePassword()
 	err := validation.ValidateByScenario(constants.ScenarioHashPassword, u)
 	assert.Nil(t, err)
 }

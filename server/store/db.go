@@ -35,6 +35,10 @@ func initTestDb() *gorm.DB {
 	return processInitDb(DbDsn)
 }
 
+func SetMockDb(mockDb *gorm.DB) {
+	db = mockDb
+}
+
 func GetMockDB(db *sql.DB) (gormDB *gorm.DB) {
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
 		SkipInitializeWithVersion: true,

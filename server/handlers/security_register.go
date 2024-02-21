@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/vavilen84/beenny-go/auth"
 	"github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
@@ -82,12 +81,6 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = auth.CreateJWT(db, u)
-	if err != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
-		return
-	}
 	resp := make(dto.ResponseData)
 	resp["user"] = u
 	c.WriteSuccessResponse(w, resp, http.StatusOK)

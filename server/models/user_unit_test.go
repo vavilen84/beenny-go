@@ -183,7 +183,7 @@ func Test_UserChangePassword_ok(t *testing.T) {
 func Test_encodePassword(t *testing.T) {
 	m := GetTestValidUserModel()
 	pass := m.Password
-	m.encodePassword()
+	m.EncodePassword()
 	assert.NotEqual(t, pass, m.Password)
 	assert.NotEmpty(t, m.PasswordSalt)
 }

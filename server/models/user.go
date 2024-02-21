@@ -95,7 +95,7 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	m.encodePassword()
+	m.EncodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
 		helpers.LogError(err)
@@ -154,7 +154,7 @@ func UserResetPassword(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	m.encodePassword()
+	m.EncodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
 		helpers.LogError(err)
@@ -170,7 +170,7 @@ func UserChangePassword(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	m.encodePassword()
+	m.EncodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
 		helpers.LogError(err)
@@ -180,7 +180,7 @@ func UserChangePassword(db *gorm.DB, m *User) (err error) {
 	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
 }
 
-func (m *User) encodePassword() {
+func (m *User) EncodePassword() {
 	salt, encodedPwd := password.Encode(m.Password, nil)
 	m.Password = encodedPwd
 	m.PasswordSalt = salt

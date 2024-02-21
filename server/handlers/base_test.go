@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/anaskhan96/go-password-encoder"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/auth"
@@ -54,6 +55,12 @@ type TestTwoFaLoginSecondResp struct {
 	FormErrors map[string][]string               `json:"formErrors"`
 }
 
+func makeTestServer() *httptest.Server {
+	handler := handlers.MakeHandler()
+	ts := httptest.NewServer(handler)
+	return ts
+}
+
 func initApp() *httptest.Server {
 	err := godotenv.Load("../.env")
 	if err != nil {
@@ -67,13 +74,11 @@ func initApp() *httptest.Server {
 	if err := db.Exec("delete from `users`").Error; err != nil {
 		fmt.Println("Error deleting entities:", err)
 	}
-	handler := handlers.MakeHandler()
-	ts := httptest.NewServer(handler)
-	return ts
+	return makeTestServer()
 }
 
-func registerUser(t *testing.T, ts *httptest.Server) {
-	body := dto.Register{
+func getValidRegisterUserDTO() dto.Register {
+	return dto.Register{
 		FirstName:      "John",
 		LastName:       "Dou",
 		CurrentCountry: "UA",
@@ -85,6 +90,10 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 		Email:          registerUserEmail,
 		Password:       registerUserPassword,
 	}
+}
+
+func registerUser(t *testing.T, ts *httptest.Server) {
+	body := getValidRegisterUserDTO()
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
 		log.Fatal(err)
@@ -106,7 +115,7 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 		t.Fatalf("Error reading response body: %v", err)
 	}
 
-	registerResp := TestRegisterResp{}
+	registerResp := dto.Response{}
 	err = json.Unmarshal(responseBody, &registerResp)
 	if err != nil {
 		t.Fatalf("Error reading response body: %v", err)
@@ -117,10 +126,32 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 	}
 
 	assert.Equal(t, registerResp.Status, http.StatusOK)
-	assert.Empty(t, registerResp.Data)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
+
+	responseBodyData, ok := registerResp.Data.(dto.ResponseData)
+	assert.True(t, ok)
+	u, ok := responseBodyData["user"].(models.User)
+	assert.True(t, ok)
+
+	assert.Equal(t, body.FirstName, u.FirstName)
+	assert.Equal(t, body.LastName, u.LastName)
+	assert.Equal(t, body.CurrentCountry, u.CurrentCountry)
+	assert.Equal(t, body.CountryOfBirth, u.CountryOfBirth)
+	assert.Equal(t, body.Gender, u.Gender)
+	assert.Equal(t, body.Timezone, u.Timezone)
+	assert.Equal(t, body.Birthday, u.Birthday)
+	assert.Equal(t, body.Photo, u.Photo)
+	assert.Equal(t, body.Email, u.Email)
+
+	assert.NotEmpty(t, u.PasswordSalt)
+	assert.NotEmpty(t, u.EmailTwoFaCode)
+
+	assert.False(t, u.IsEmailVerified)
+
+	passwordIsValid := password.Verify(body.Password, u.PasswordSalt, u.Password, nil)
+	assert.True(t, passwordIsValid)
 }
 
 func loginUser(t *testing.T, ts *httptest.Server) string {
