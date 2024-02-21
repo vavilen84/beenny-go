@@ -29,11 +29,14 @@ var AppCommands = []*cobra.Command{
 		Use:  "migration-create",
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			store.InitDB()
 			now := time.Now()
 			nowUnix := now.Unix()
 
-			file := filepath.Join(constants.MigrationsFolder, fmt.Sprintf("%d_%s.up.sql", nowUnix, args[0]))
+			file := filepath.Join(
+				os.Getenv("APP_ROOT"),
+				constants.MigrationsFolder,
+				fmt.Sprintf("%d_%s.up.sql", nowUnix, args[0]),
+			)
 			_, err := os.Create(file)
 			if err != nil {
 				helpers.LogError(err)
