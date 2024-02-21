@@ -18,11 +18,15 @@ type JWTPayload struct {
 	JWTInfoId int `json:"jwt_info_id"`
 }
 
-func insertJWTInfo(db *gorm.DB, u *models.User) (jwtInfo models.JWTInfo, err error) {
-	jwtInfo = models.JWTInfo{
+func getJWTInfo(u *models.User) models.JWTInfo {
+	return models.JWTInfo{
 		UserId:    u.Id,
 		ExpiresAt: helpers.GetDefaultJWTExpiresAt(),
 	}
+}
+
+func insertJWTInfo(db *gorm.DB, u *models.User) (jwtInfo models.JWTInfo, err error) {
+	jwtInfo = getJWTInfo(u)
 	err = models.InsertJWTInfo(db, &jwtInfo)
 	if err != nil {
 		helpers.LogError(err)

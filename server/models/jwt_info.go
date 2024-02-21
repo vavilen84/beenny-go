@@ -44,7 +44,7 @@ func (JWTInfo) GetValidator() interface{} {
 }
 
 func InsertJWTInfo(db *gorm.DB, m *JWTInfo) (err error) {
-	m.generateSecret()
+	m.GenerateSecret()
 	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
 		helpers.LogError(err)
@@ -57,7 +57,7 @@ func InsertJWTInfo(db *gorm.DB, m *JWTInfo) (err error) {
 	return
 }
 
-func (m *JWTInfo) generateSecret() {
+func (m *JWTInfo) GenerateSecret() {
 	m.Secret = helpers.GenerateRandomString(64)
 }
 

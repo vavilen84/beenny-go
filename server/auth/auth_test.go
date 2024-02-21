@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/nft-project/models"
 	"log"
 	"testing"
 )
@@ -13,7 +13,24 @@ func TestParseJWTToken(t *testing.T) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Print(jwtPayload)
+	assert.Equal(t, jwtPayload.JWTInfoId, 15)
+	assert.NotEmpty(t, jwtPayload.Payload.ExpirationTime)
+	assert.NotEmpty(t, jwtPayload.Payload.IssuedAt)
+}
+
+func TestGenerateJWTAndParse(t *testing.T) {
+	u := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&u)
+	jwtInfo.Id = 15 // like we have inserted it
+	jwtInfo.GenerateSecret()
+	token, err := generateJWT(jwtInfo)
+	assert.Nil(t, err)
+	jwtPayload, err := ParseJWTPayload(token)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	assert.Equal(t, jwtPayload.JWTInfoId, 15)
 	assert.NotEmpty(t, jwtPayload.Payload.ExpirationTime)
 	assert.NotEmpty(t, jwtPayload.Payload.IssuedAt)
