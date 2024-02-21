@@ -104,7 +104,7 @@ func performMigrateTx(db *gorm.DB, m Migration) error {
 		helpers.LogError(tx.Error)
 		return tx.Error
 	}
-	err := InsertMigration(db, &m)
+	err := InsertMigration(tx, &m)
 	if err != nil {
 		helpers.LogError(tx.Error)
 		return tx.Error
@@ -118,7 +118,7 @@ func performMigrateTx(db *gorm.DB, m Migration) error {
 		return readErr
 	}
 	sqlQuery := string(content)
-	err = db.Raw(sqlQuery).Error
+	err = tx.Exec(sqlQuery).Error
 	if err != nil {
 		tx.Rollback()
 		helpers.LogError(err)
@@ -170,12 +170,12 @@ func CreateMigrationsTableIfNotExists(db *gorm.DB) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS migrations
 		(
-   		id INT UNSIGNED NOT NULL PRIMARY KEY,
+   		    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			version BIGINT UNSIGNED NOT NULL,
 			filename varchar(255) NOT NULL,
 			created_at BIGINT UNSIGNED NOT NULL
 		) ENGINE=InnoDB CHARSET=utf8;
 	`
-	err := db.Raw(query).Error
+	err := db.Exec(query).Error
 	return err
 }
