@@ -60,13 +60,10 @@ func initApp() *httptest.Server {
 	}
 	store.InitTestDB()
 	db := store.GetDB()
-	if err := db.Exec("delete from `drop`").Error; err != nil {
-		fmt.Println("Error deleting entities:", err)
-	}
 	if err := db.Exec("delete from `jwt_info`").Error; err != nil {
 		fmt.Println("Error deleting entities:", err)
 	}
-	if err := db.Exec("delete from `user`").Error; err != nil {
+	if err := db.Exec("delete from `users`").Error; err != nil {
 		fmt.Println("Error deleting entities:", err)
 	}
 	handler := handlers.MakeHandler()
