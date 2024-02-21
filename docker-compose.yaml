@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   db:
-    container_name: 'nft-project-db'
+    container_name: 'beenny-go-db'
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -11,20 +11,14 @@ services:
       - "3306:3306"
     expose:
       - "3306"
-    env_file:
-      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - ./docker/db/dbdata:/var/lib/mysql
+      - "./docker/mysql:/var/lib/mysql"
 
   pma:
-    container_name: 'nft-project-pma'
-    restart:
-      always
+    container_name: 'beenny-go-pma'
+    restart: always
     image: phpmyadmin/phpmyadmin
     ports:
       - "8081:80"
@@ -32,6 +26,8 @@ services:
       - PMA_ARBITRARY=1
     depends_on:
       - db
+    networks:
+      - local
 
 #  frontend:
 #    container_name: 'nft-project-frontend'
@@ -71,3 +67,6 @@ services:
 #      - .env
 #    volumes:
 #      - ./:/app
+
+networks:
+  local:
