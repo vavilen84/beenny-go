@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/vavilen84/nft-project/handlers"
-	"github.com/vavilen84/nft-project/store"
+	"github.com/vavilen84/beenny-go/handlers"
+	"github.com/vavilen84/beenny-go/store"
 	"log"
 )
 

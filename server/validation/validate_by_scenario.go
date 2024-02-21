@@ -3,8 +3,8 @@ package validation
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"github.com/vavilen84/nft-project/helpers"
-	"github.com/vavilen84/nft-project/interfaces"
+	"github.com/vavilen84/beenny-go/helpers"
+	"github.com/vavilen84/beenny-go/interfaces"
 )
 
 // should be passed ptr to model m otherwise - func will panic

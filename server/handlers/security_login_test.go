@@ -2,7 +2,7 @@ package handlers_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/store"
+	"github.com/vavilen84/beenny-go/store"
 	"testing"
 )
 

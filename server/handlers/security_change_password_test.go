@@ -3,7 +3,7 @@ package handlers_test
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/vavilen84/nft-project/dto"
+	"github.com/vavilen84/beenny-go/dto"
 	"log"
 	"net/http"
 	"testing"

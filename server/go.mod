@@ -1,4 +1,4 @@
-module github.com/vavilen84/nft-project
+module github.com/vavilen84/beenny-go
 
 go 1.20
 

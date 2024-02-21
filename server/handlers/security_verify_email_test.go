@@ -3,8 +3,8 @@ package handlers_test
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/models"
-	"github.com/vavilen84/nft-project/store"
+	"github.com/vavilen84/beenny-go/models"
+	"github.com/vavilen84/beenny-go/store"
 	"log"
 	"net/http"
 	"testing"

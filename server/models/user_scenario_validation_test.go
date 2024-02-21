@@ -3,8 +3,8 @@ package models
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/constants"
-	"github.com/vavilen84/nft-project/validation"
+	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/validation"
 	"log"
 	"testing"
 )

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/vavilen84/nft-project/dto"
-	"github.com/vavilen84/nft-project/helpers"
-	"github.com/vavilen84/nft-project/validation"
+	"github.com/vavilen84/beenny-go/dto"
+	"github.com/vavilen84/beenny-go/helpers"
+	"github.com/vavilen84/beenny-go/validation"
 	"net/http"
 )
 

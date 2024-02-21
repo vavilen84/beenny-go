@@ -3,8 +3,8 @@ package store
 import (
 	"context"
 	"database/sql"
-	"github.com/vavilen84/nft-project/constants"
-	"github.com/vavilen84/nft-project/helpers"
+	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"time"

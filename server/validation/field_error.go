@@ -2,7 +2,7 @@ package validation
 
 import (
 	"fmt"
-	"github.com/vavilen84/nft-project/constants"
+	"github.com/vavilen84/beenny-go/constants"
 )
 
 type FieldError struct {

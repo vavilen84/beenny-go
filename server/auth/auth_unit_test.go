@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/models"
+	"github.com/vavilen84/beenny-go/models"
 	"log"
 	"testing"
 )
@@ -34,4 +34,34 @@ func TestGenerateJWTAndParse(t *testing.T) {
 	assert.Equal(t, jwtPayload.JWTInfoId, 15)
 	assert.NotEmpty(t, jwtPayload.Payload.ExpirationTime)
 	assert.NotEmpty(t, jwtPayload.Payload.IssuedAt)
+}
+
+func Test_getJWTInfo(t *testing.T) {
+	m := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&m)
+	assert.Equal(t, 15, jwtInfo.UserId)
+	assert.NotNil(t, jwtInfo.ExpiresAt)
+}
+
+func Test_insertJWTInfo_ok(t *testing.T) {
+	//customMatcher := mocks.CustomMatcher{}
+	//db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//defer db.Close()
+	//gormDB := store.GetMockDB(db)
+	//
+	//sql := "INSERT INTO `users`"
+	//sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
+	//
+	//m := models.GetTestValidUserModel()
+	//err = InsertUser(gormDB, &m)
+	//assert.Nil(t, err)
+	//
+	//if err := sqlMock.ExpectationsWereMet(); err != nil {
+	//	t.Errorf("there were unfulfilled expectations: %s", err)
+	//}
 }

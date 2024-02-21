@@ -8,9 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
-	"github.com/vavilen84/nft-project/constants"
-	"github.com/vavilen84/nft-project/helpers"
-	"github.com/vavilen84/nft-project/interfaces"
+	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
+	"github.com/vavilen84/beenny-go/interfaces"
 	"os"
 )
 

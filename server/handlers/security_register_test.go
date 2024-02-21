@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/dto"
+	"github.com/vavilen84/beenny-go/dto"
 	"io"
 	"log"
 	"net/http"

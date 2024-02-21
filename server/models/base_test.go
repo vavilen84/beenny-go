@@ -1,35 +1,8 @@
 package models
 
 import (
-	"database/sql"
-	"errors"
-	"github.com/vavilen84/nft-project/constants"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"strings"
+	"github.com/vavilen84/beenny-go/constants"
 )
-
-type CustomMatcher struct{}
-
-func (c CustomMatcher) Match(expectedSQL, actualSQL string) error {
-	if !strings.Contains(actualSQL, expectedSQL) {
-		return errors.New("SQL doesnt match")
-	}
-	return nil
-}
-
-func GetMockDB(db *sql.DB) (gormDB *gorm.DB) {
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		SkipInitializeWithVersion: true,
-		Conn:                      db,
-	}), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	gormDB = gormDB.Session(&gorm.Session{SkipDefaultTransaction: true})
-
-	return
-}
 
 func GetTestValidUserModel() User {
 	return User{

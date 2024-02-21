@@ -5,8 +5,9 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
-	"github.com/vavilen84/nft-project/constants"
-	"github.com/vavilen84/nft-project/validation"
+	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/mocks"
+	"github.com/vavilen84/beenny-go/validation"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -84,7 +85,7 @@ func TestInsertJWTInfo(t *testing.T) {
 }
 
 func Test_FindJWTInfoById(t *testing.T) {
-	customMatcher := CustomMatcher{}
+	customMatcher := mocks.CustomMatcher{}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

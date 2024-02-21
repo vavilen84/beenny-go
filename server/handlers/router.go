@@ -4,7 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/vavilen84/nft-project/constants"
+	"github.com/vavilen84/beenny-go/constants"
 	"log"
 	"net/http"
 	"os"

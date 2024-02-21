@@ -4,7 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/vavilen84/nft-project/mocks"
+	"github.com/vavilen84/beenny-go/mocks"
 	"testing"
 )
 
