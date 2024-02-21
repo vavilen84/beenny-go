@@ -104,8 +104,7 @@ func sendEmail(recipient, sender, subject, htmlBody string) error {
 		},
 		Source: aws.String(sender),
 	}
-	o, err := svc.SendEmail(input)
-	fmt.Println(o)
+	_, err := svc.SendEmail(input)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {

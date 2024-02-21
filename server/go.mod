@@ -28,6 +28,7 @@ require (
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
