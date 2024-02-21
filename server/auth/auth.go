@@ -107,6 +107,8 @@ func VerifyJWT(db *gorm.DB, token []byte) (isValid bool, err error) {
 		return
 	}
 	if payload.ExpirationTime.Before(time.Now()) {
+		err = errors.New("JWT token expired")
+		helpers.LogError(err)
 		return
 	}
 	isValid = true

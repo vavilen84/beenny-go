@@ -8,6 +8,7 @@ import (
 	"github.com/vavilen84/beenny-go/store"
 	"log"
 	"testing"
+	"time"
 )
 
 func TestParseJWTToken(t *testing.T) {
@@ -124,6 +125,113 @@ func Test_VerifyJWT_ok(t *testing.T) {
 	isValid, err := VerifyJWT(gormDB, token)
 	assert.Nil(t, err)
 	assert.True(t, isValid)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_VerifyJWT_notOk_couldNotParseJWTPayload(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, _, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	token := []byte("123sd-f09sdf0-9sd-0f9s-d0f9s-d0f9-sd0f9s-d0f9sd-0f9") // fake token
+
+	isValid, err := VerifyJWT(gormDB, token)
+	assert.NotNil(t, err)
+	assert.False(t, isValid)
+}
+
+func Test_VerifyJWT_notOk_couldNotFindJWTInfoById(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	m := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&m)
+	jwtInfo.GenerateSecret()
+	token, err := generateJWT(jwtInfo)
+	assert.Nil(t, err)
+
+	rows := sqlmock.NewRows([]string{"id", "secret"}) // no rows returned
+	expectedSQL := "SELECT * FROM `jwt_info`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	isValid, err := VerifyJWT(gormDB, token)
+	assert.NotNil(t, err)
+	assert.False(t, isValid)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_VerifyJWT_notOk_wrongSecret(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	m := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&m)
+	jwtInfo.GenerateSecret()
+	token, err := generateJWT(jwtInfo)
+	assert.Nil(t, err)
+
+	rows := sqlmock.NewRows([]string{"id", "secret"}).AddRow(2, "123456") // wrong secret
+	expectedSQL := "SELECT * FROM `jwt_info`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	isValid, err := VerifyJWT(gormDB, token)
+	assert.NotNil(t, err)
+	assert.False(t, isValid)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_VerifyJWT_notOk_expired(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	m := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&m)
+	jwtInfo.ExpiresAt = time.Now().Add(-1 * time.Hour) // already expired
+	jwtInfo.GenerateSecret()
+	token, err := generateJWT(jwtInfo)
+	assert.Nil(t, err)
+
+	rows := sqlmock.NewRows([]string{"id", "secret"}).AddRow(2, jwtInfo.Secret)
+	expectedSQL := "SELECT * FROM `jwt_info`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	isValid, err := VerifyJWT(gormDB, token)
+	assert.NotNil(t, err)
+	assert.False(t, isValid)
 
 	if err := sqlMock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
