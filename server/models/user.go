@@ -11,23 +11,23 @@ import (
 )
 
 type User struct {
-	Id                         int    `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
-	FirstName                  string `json:"firstName"`
-	LastName                   string `json:"lastName"`
-	Email                      string `json:"email"`
-	Password                   string `json:"password"`
-	PasswordSalt               string
-	PasswordResetToken         string
-	PasswordResetTokenExpireAt *time.Time
-	Role                       int `json:"role"`
-	IsEmailVerified            bool
-	CurrentCountry             string `json:"currentCountry"`
-	CountryOfBirth             string `json:"countryOfBirth"`
-	Gender                     string `json:"gender"`
-	Timezone                   string `json:"timezone"`
-	Birthday                   string `json:"birthday"`
-	Photo                      string `json:"photo"`
-	EmailTwoFaCode             string `json:"emailTwoFaCode"`
+	Id                          int    `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
+	FirstName                   string `json:"firstName"`
+	LastName                    string `json:"lastName"`
+	Email                       string `json:"email"`
+	Password                    string `json:"password"`
+	PasswordSalt                string
+	PasswordResetToken          string
+	PasswordResetTokenExpiresAt *time.Time
+	Role                        int `json:"role"`
+	IsEmailVerified             bool
+	CurrentCountry              string `json:"currentCountry"`
+	CountryOfBirth              string `json:"countryOfBirth"`
+	Gender                      string `json:"gender"`
+	Timezone                    string `json:"timezone"`
+	Birthday                    string `json:"birthday"`
+	Photo                       string `json:"photo"`
+	EmailTwoFaCode              string `json:"emailTwoFaCode"`
 }
 
 func (m *User) TableName() string {
@@ -55,8 +55,8 @@ func (User) GetValidationRules() interface{} {
 			"PasswordSalt": "max=5000,required",
 		},
 		constants.ScenarioForgotPassword: validation.FieldRules{
-			"PasswordResetToken":         "max=5000,required",
-			"PasswordResetTokenExpireAt": "required,customFutureValidator",
+			"PasswordResetToken":          "max=5000,required",
+			"PasswordResetTokenExpiresAt": "required,customFutureValidator",
 		},
 		constants.ScenarioChangePassword: validation.FieldRules{
 			"Password": "max=5000,required,customPasswordValidator",
@@ -115,7 +115,7 @@ func ForgotPassword(db *gorm.DB, m *User) (err error) {
 		return
 	}
 	sql := "UPDATE users SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
-	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpireAt, m.Id).Error
+	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpiresAt, m.Id).Error
 }
 
 func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
@@ -231,7 +231,7 @@ func (u *User) SetForgotPasswordData() string {
 	oneHourLater := currentTime.Add(time.Hour)
 
 	u.PasswordResetToken = token
-	u.PasswordResetTokenExpireAt = &oneHourLater
+	u.PasswordResetTokenExpiresAt = &oneHourLater
 
 	return token
 }

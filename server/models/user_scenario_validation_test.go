@@ -65,7 +65,7 @@ func Test_User_ScenarioForgotPassword_notOk(t *testing.T) {
 		log.Fatalln("can not assert validation.Errors")
 	}
 	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetToken"), v["PasswordResetToken"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetTokenExpireAt"), v["PasswordResetTokenExpireAt"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "PasswordResetTokenExpiresAt"), v["PasswordResetTokenExpiresAt"][0].Message)
 }
 
 func Test_User_ScenarioForgotPassword_Ok(t *testing.T) {

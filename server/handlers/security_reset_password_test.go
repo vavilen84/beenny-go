@@ -78,5 +78,5 @@ func Test_resetPassword_OK(t *testing.T) {
 		log.Fatal("user not found")
 	}
 	assert.Empty(t, u.PasswordResetToken)
-	assert.Empty(t, u.PasswordResetTokenExpireAt)
+	assert.Empty(t, u.PasswordResetTokenExpiresAt)
 }

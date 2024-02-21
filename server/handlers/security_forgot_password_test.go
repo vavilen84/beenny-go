@@ -51,7 +51,7 @@ func Test_ForgotPassword_OK(t *testing.T) {
 	if err != nil {
 		log.Fatal("user not found")
 	}
-	assert.Empty(t, u.PasswordResetTokenExpireAt)
+	assert.Empty(t, u.PasswordResetTokenExpiresAt)
 	assert.Empty(t, u.PasswordResetToken)
 
 	body := dto.ForgotPassword{
@@ -81,6 +81,6 @@ func Test_ForgotPassword_OK(t *testing.T) {
 	if err != nil {
 		log.Fatal("user not found")
 	}
-	assert.NotEmpty(t, u.PasswordResetTokenExpireAt)
+	assert.NotEmpty(t, u.PasswordResetTokenExpiresAt)
 	assert.NotEmpty(t, u.PasswordResetToken)
 }

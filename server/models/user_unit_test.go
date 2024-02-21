@@ -282,5 +282,5 @@ func Test_SetForgotPasswordData_ok(t *testing.T) {
 	u := User{}
 	u.SetForgotPasswordData()
 	assert.NotEmpty(t, u.PasswordResetToken)
-	assert.NotEmpty(t, u.PasswordResetTokenExpireAt)
+	assert.NotEmpty(t, u.PasswordResetTokenExpiresAt)
 }
