@@ -99,3 +99,33 @@ func Test_CreateJWT_ok(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+
+func Test_VerifyJWT_ok(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	m := models.User{
+		Id: 15,
+	}
+	jwtInfo := getJWTInfo(&m)
+	jwtInfo.GenerateSecret()
+	token, err := generateJWT(jwtInfo)
+	assert.Nil(t, err)
+
+	rows := sqlmock.NewRows([]string{"id", "secret"}).AddRow(2, jwtInfo.Secret)
+	expectedSQL := "SELECT * FROM `jwt_info`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	isValid, err := VerifyJWT(gormDB, token)
+	assert.Nil(t, err)
+	assert.True(t, isValid)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
