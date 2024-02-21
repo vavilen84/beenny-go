@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func Test_Register_ok(t *testing.T) {
+func Test_Unit_Security_Register_ok(t *testing.T) {
 	customMatcher := mocks.CustomMatcher{}
 	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
@@ -25,7 +25,7 @@ func Test_Register_ok(t *testing.T) {
 
 	// find user by email
 	// no user found
-	rows := sqlmock.NewRows([]string{"id", "email_two_fa_code"})
+	rows := sqlmock.NewRows([]string{"id"})
 	expectedSQL := "SELECT * FROM `users`"
 	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
 
@@ -37,6 +37,8 @@ func Test_Register_ok(t *testing.T) {
 	mockSESclient := mocks.NewSESClient(t)
 	aws.SetSESClient(mockSESclient)
 	mockSESclient.On("SendEmail", mock.Anything).Return(&ses.SendEmailOutput{}, nil)
+
+	registerUser(t, ts)
 
 	mockSESclient.AssertCalled(t, "SendEmail", mock.Anything)
 	mockSESclient.AssertExpectations(t)

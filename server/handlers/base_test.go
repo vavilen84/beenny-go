@@ -79,16 +79,18 @@ func initApp() *httptest.Server {
 
 func getValidRegisterUserDTO() dto.Register {
 	return dto.Register{
-		FirstName:      "John",
-		LastName:       "Dou",
-		CurrentCountry: "UA",
-		CountryOfBirth: "UA",
-		Gender:         constants.GenderMale,
-		Timezone:       "US/Arizona",
-		Birthday:       "1984-01-23",
-		Photo:          "/2024/01/23/s09d8fs09dfu.jpg",
-		Email:          registerUserEmail,
-		Password:       registerUserPassword,
+		FirstName:       "John",
+		LastName:        "Dou",
+		CurrentCountry:  "UA",
+		CountryOfBirth:  "UA",
+		Gender:          constants.GenderMale,
+		Timezone:        "US/Arizona",
+		Birthday:        "1984-01-23",
+		Photo:           "/2024/01/23/s09d8fs09dfu.jpg",
+		Email:           registerUserEmail,
+		Password:        registerUserPassword,
+		ConfirmPassword: registerUserPassword,
+		AgreeTerms:      true,
 	}
 }
 
@@ -130,10 +132,14 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
 
-	responseBodyData, ok := registerResp.Data.(dto.ResponseData)
+	responseBodyData, ok := registerResp.Data.(map[string]interface{})
 	assert.True(t, ok)
-	u, ok := responseBodyData["user"].(models.User)
-	assert.True(t, ok)
+
+	jsonBytesData, err := json.Marshal(responseBodyData["user"])
+	assert.Nil(t, err)
+	u := models.User{}
+	err = json.Unmarshal(jsonBytesData, &u)
+	assert.Nil(t, err)
 
 	assert.Equal(t, body.FirstName, u.FirstName)
 	assert.Equal(t, body.LastName, u.LastName)
