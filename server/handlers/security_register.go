@@ -29,20 +29,20 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	err = validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
 	if err != nil {
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
+		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 	if dtoModel.Password != dtoModel.ConfirmPassword {
 		err = errors.New("Passwords don't match")
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
+		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
 		if err != gorm.ErrRecordNotFound {
-			c.WriteErrorResponse(w, err, http.StatusInternalServerError)
+			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -78,16 +78,17 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	err = aws.SendEmailVerificationMail(u.Email, emailVerificationToken)
 	if err != nil {
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
 
 	_, err = auth.CreateJWT(db, u)
 	if err != nil {
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
 	resp := make(dto.ResponseData)
+	resp["user"] = u
 	c.WriteSuccessResponse(w, resp, http.StatusOK)
 }
