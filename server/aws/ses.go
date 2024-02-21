@@ -1,22 +1,22 @@
 package aws
 
 import (
-	"fmt"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/vavilen84/nft-project/constants"
-	"github.com/vavilen84/nft-project/helpers"
-	"os"
-
-	//go get -u github.com/aws/aws-sdk-go
 	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
+	"github.com/vavilen84/nft-project/constants"
+	"github.com/vavilen84/nft-project/helpers"
+	"github.com/vavilen84/nft-project/interfaces"
+	"os"
 )
 
+var client interfaces.SESClient
+
 func SendResetPasswordEmail(recipient, token string) error {
-	// TODO: replace with real domain
 	link := fmt.Sprintf(
 		constants.ResetPasswordHtmlBodyFormat,
 		os.Getenv("DOMAIN")+"/reset-password&token="+token,
@@ -43,7 +43,6 @@ func SendEmailVerificationMail(recipient, token string) error {
 }
 
 func SendLoginTwoFaCode(recipient, token string) error {
-	// TODO: replace with real domain
 	link := fmt.Sprintf(
 		constants.LoginTwoFaCodeHtmlBodyFormat,
 		os.Getenv("DOMAIN")+"/two-fa-login-step-two&token="+token,
@@ -56,7 +55,15 @@ func SendLoginTwoFaCode(recipient, token string) error {
 	)
 }
 
-func sendEmail(recipient, sender, subject, htmlBody string) error {
+// for testing purposes
+func SetSESClient(cl interfaces.SESClient) {
+	client = cl
+}
+
+func getSESClient() interfaces.SESClient {
+	if client != nil {
+		return client
+	}
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION")),
 		Credentials: credentials.NewStaticCredentials(
@@ -65,7 +72,17 @@ func sendEmail(recipient, sender, subject, htmlBody string) error {
 			"",
 		),
 	})
+	if err != nil {
+		helpers.LogError(err)
+		panic(err)
+	}
 	svc := ses.New(sess)
+
+	return svc
+}
+
+func sendEmail(recipient, sender, subject, htmlBody string) error {
+	svc := getSESClient()
 	input := &ses.SendEmailInput{
 		Destination: &ses.Destination{
 			CcAddresses: []*string{},
