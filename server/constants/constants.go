@@ -34,9 +34,7 @@ const (
 	//common
 	SqlDsnFormat = `%s:%s@tcp(%s:%s)/%s`
 
-	DevelopmentAppEnv = "development"
-	ProductionAppEnv  = "production"
-	TestingAppEnv     = "testing"
+	MigrationsFolder = "migrations"
 
 	// validation tags
 	RequiredTag                = "required"
