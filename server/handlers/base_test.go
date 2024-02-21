@@ -53,13 +53,12 @@ type TestTwoFaLoginSecondResp struct {
 	FormErrors map[string][]string               `json:"formErrors"`
 }
 
-// TODO: dont use on productiuon - all data between tets will be lost!
 func initApp() *httptest.Server {
 	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Fatal("Can not load .env file")
 	}
-	store.InitDB()
+	store.InitTestDB()
 	db := store.GetDB()
 	if err := db.Exec("delete from `drop`").Error; err != nil {
 		fmt.Println("Error deleting entities:", err)

@@ -15,12 +15,21 @@ func InitDB() {
 	db = initDb()
 }
 
+func InitTestDB() {
+	db = initTestDb()
+}
+
 func GetDB() *gorm.DB {
 	return db
 }
 
 func initDb() *gorm.DB {
 	DbDsn := os.Getenv("DB_SQL_DSN")
+	return processInitDb(DbDsn)
+}
+
+func initTestDb() *gorm.DB {
+	DbDsn := os.Getenv("TEST_DB_SQL_DSN")
 	return processInitDb(DbDsn)
 }
 
