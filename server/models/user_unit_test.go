@@ -26,7 +26,28 @@ func TestUser_InsertUser_ok(t *testing.T) {
 
 	m := GetTestValidUserModel()
 	err = InsertUser(gormDB, &m)
-	//sqlMock.ExpectCommit()
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_ForgotPassword_ok(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := GetMockDB(db)
+
+	sql := "UPDATE users"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
+
+	m := GetTestValidUserModel()
+	m.SetForgotPasswordData()
+	err = ForgotPassword(gormDB, &m)
 	assert.Nil(t, err)
 
 	if err := sqlMock.ExpectationsWereMet(); err != nil {

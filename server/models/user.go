@@ -114,7 +114,7 @@ func ForgotPassword(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	sql := "UPDATE user SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
+	sql := "UPDATE users SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
 	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpireAt, m.Id).Error
 }
 
@@ -124,17 +124,17 @@ func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	sql := "UPDATE user SET email_two_fa_code = ? WHERE id = ?"
+	sql := "UPDATE users SET email_two_fa_code = ? WHERE id = ?"
 	return db.Exec(sql, m.EmailTwoFaCode, m.Id).Error
 }
 
 func ResetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
-	sql := "UPDATE user SET email_two_fa_code = '' WHERE id = ?"
+	sql := "UPDATE users SET email_two_fa_code = '' WHERE id = ?"
 	return db.Exec(sql, m.Id).Error
 }
 
 func ResetResetPasswordToken(db *gorm.DB, m *User) (err error) {
-	sql := "UPDATE user SET password_reset_token = '', password_reset_token_expire_at = NULL WHERE id = ?"
+	sql := "UPDATE users SET password_reset_token = '', password_reset_token_expire_at = NULL WHERE id = ?"
 	return db.Exec(sql, m.Id).Error
 }
 
@@ -144,7 +144,7 @@ func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	sql := "UPDATE user SET is_email_verified = ?, email_two_fa_code = ? WHERE id = ?"
+	sql := "UPDATE users SET is_email_verified = ?, email_two_fa_code = ? WHERE id = ?"
 	return db.Exec(sql, m.IsEmailVerified, m.EmailTwoFaCode, m.Id).Error
 }
 
@@ -160,7 +160,7 @@ func UserResetPassword(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	sql := "UPDATE user SET password = ?, password_salt = ? WHERE id = ?"
+	sql := "UPDATE users SET password = ?, password_salt = ? WHERE id = ?"
 	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
 }
 
@@ -176,7 +176,7 @@ func UserChangePassword(db *gorm.DB, m *User) (err error) {
 		helpers.LogError(err)
 		return
 	}
-	sql := "UPDATE user SET password = ?, password_salt = ? WHERE id = ?"
+	sql := "UPDATE users SET password = ?, password_salt = ? WHERE id = ?"
 	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
 }
 
