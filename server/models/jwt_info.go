@@ -27,7 +27,7 @@ func (JWTInfo) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
 			"UserId":    "required",
-			"Secret":    "min=3,max=5000,required",
+			"Secret":    "required,max=5000",
 			"ExpiresAt": "required,customFutureValidator",
 		},
 	}
@@ -45,10 +45,10 @@ func (JWTInfo) GetValidator() interface{} {
 
 func InsertJWTInfo(db *gorm.DB, m *JWTInfo) (err error) {
 	m.GenerateSecret()
-	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	err = db.Create(m).Error
 	if err != nil {

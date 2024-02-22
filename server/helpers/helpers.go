@@ -104,6 +104,19 @@ func GenerateS3FilePath(prefix, fileExtension string) string {
 	return filePath
 }
 
+func AllErrorsExist(expected, actual []string) bool {
+	results := make([]bool, 0)
+	for _, e := range expected {
+		for _, a := range actual {
+			if e == a {
+				results = append(results, true)
+				break
+			}
+		}
+	}
+	return len(expected) == len(actual) && len(expected) == len(results)
+}
+
 func AllStringsAreErrors(strings []string, errors []error) bool {
 	results := make([]bool, 0)
 	for _, s := range strings {

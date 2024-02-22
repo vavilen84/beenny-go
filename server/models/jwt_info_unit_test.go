@@ -8,24 +8,21 @@ import (
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/mocks"
+	"github.com/vavilen84/beenny-go/store"
 	"github.com/vavilen84/beenny-go/validation"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"log"
 	"testing"
 	"time"
 )
 
-func TestInsertJWTInfo(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func Test_Unit_InsertJWTInfo(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		panic(err)
 	}
 	defer db.Close()
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		SkipInitializeWithVersion: true,
-		Conn:                      db,
-	}), &gorm.Config{})
+	gormDB := store.GetMockDB(db)
 
 	// error
 	m := JWTInfo{}
@@ -39,7 +36,7 @@ func TestInsertJWTInfo(t *testing.T) {
 		fmt.Sprintf(constants.RequiredErrorMsg, "UserId"),
 		fmt.Sprintf(constants.RequiredErrorMsg, "ExpiresAt"),
 	}
-	ok = helpers.AllStringsAreErrors(mustHaveErrors, v)
+	ok = helpers.AllErrorsExist(mustHaveErrors, v)
 	assert.True(t, ok)
 
 	// Calculate the duration of 24 hours
@@ -54,6 +51,7 @@ func TestInsertJWTInfo(t *testing.T) {
 
 	// error
 	m = JWTInfo{
+		UserId:    15,
 		ExpiresAt: pastTime,
 	}
 	err = InsertJWTInfo(gormDB, &m)
@@ -64,7 +62,7 @@ func TestInsertJWTInfo(t *testing.T) {
 	mustHaveErrors = []string{
 		fmt.Sprintf(constants.FutureErrorMsg, "ExpiresAt"),
 	}
-	ok = helpers.AllStringsAreErrors(mustHaveErrors, v)
+	ok = helpers.AllErrorsExist(mustHaveErrors, v)
 	assert.True(t, ok)
 
 	// Calculate the duration of 24 hours
@@ -77,9 +75,7 @@ func TestInsertJWTInfo(t *testing.T) {
 	// Add 24 hours to the current time
 	futureTime := currentTime.Add(duration)
 
-	mock.ExpectBegin()
-	mock.ExpectExec("INSERT INTO `jwt_info`").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	sqlMock.ExpectExec("INSERT INTO `jwt_info`").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// no error
 	m = JWTInfo{
@@ -89,32 +85,29 @@ func TestInsertJWTInfo(t *testing.T) {
 	err = InsertJWTInfo(gormDB, &m)
 	assert.Nil(t, err)
 
-	if err := mock.ExpectationsWereMet(); err != nil {
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
 
-func Test_FindJWTInfoById(t *testing.T) {
+func Test_Unit_FindJWTInfoById(t *testing.T) {
 	customMatcher := mocks.CustomMatcher{}
-	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		panic(err)
 	}
 	defer db.Close()
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		SkipInitializeWithVersion: true,
-		Conn:                      db,
-	}), &gorm.Config{})
+	gormDB := store.GetMockDB(db)
 
 	columns := []string{"id"}
-	mock.ExpectQuery("SELECT * FROM `jwt_info`").
+	sqlMock.ExpectQuery("SELECT * FROM `jwt_info`").
 		WithArgs(int64(1)).
 		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("1"))
 
 	_, err = FindJWTInfoById(gormDB, 1)
 	assert.Nil(t, err)
 
-	if err := mock.ExpectationsWereMet(); err != nil {
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }

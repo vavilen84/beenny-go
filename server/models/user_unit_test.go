@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func TestUser_InsertUser_ok(t *testing.T) {
+func Test_Unit_InsertUser_ok(t *testing.T) {
 	customMatcher := mocks.CustomMatcher{}
 	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {

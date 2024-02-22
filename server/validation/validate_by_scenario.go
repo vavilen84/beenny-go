@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/beenny-go/helpers"
@@ -9,10 +8,9 @@ import (
 )
 
 // should be passed ptr to model m otherwise - func will panic
-func ValidateByScenario(scenario Scenario, m interfaces.Model) error {
+func ValidateByScenario(scenario Scenario, m interfaces.Model) (errs Errors) {
 	validate := m.GetValidator().(*validator.Validate)
 	validationMap := m.GetValidationRules().(ScenarioRules)
-	var errs Errors
 	data := helpers.StructToMap(m)
 	for fieldName, validation := range validationMap[scenario] {
 		field, ok := data[fieldName]
@@ -33,8 +31,7 @@ func ValidateByScenario(scenario Scenario, m interfaces.Model) error {
 					Param: e.Param(),
 				}
 				validationError.setErrorMessage()
-				newErr := errors.New(validationError.Message)
-				errs = append(errs, newErr)
+				errs = append(errs, validationError.Message)
 			}
 		}
 	}
