@@ -67,6 +67,11 @@ func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	resp := make(dto.ResponseData)
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	bytes, err := json.Marshal(u)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+		return
+	}
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }

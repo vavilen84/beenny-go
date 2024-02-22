@@ -28,6 +28,7 @@ type User struct {
 	Birthday                    string     `json:"birthday"`
 	Photo                       string     `json:"photo"`
 	EmailTwoFaCode              string     `json:"-"`
+	AuthToken                   string     `json:"authToken" gorm:"-"`
 }
 
 func (m *User) TableName() string {

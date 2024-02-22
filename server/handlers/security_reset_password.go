@@ -53,6 +53,11 @@ func (c *SecurityController) ResetPassword(w http.ResponseWriter, r *http.Reques
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
-	resp := make(dto.ResponseData)
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	bytes, err := json.Marshal(u)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+		return
+	}
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }

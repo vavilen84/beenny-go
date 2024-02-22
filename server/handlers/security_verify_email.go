@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/vavilen84/beenny-go/constants"
-	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
@@ -35,6 +35,11 @@ func (c *SecurityController) VerifyEmail(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Server Error", http.StatusInternalServerError)
 		return
 	}
-	resp := make(dto.ResponseData)
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	bytes, err := json.Marshal(u)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+		return
+	}
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }

@@ -80,14 +80,11 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
-
-	resp := make(dto.ResponseData)
 	bytes, err := json.Marshal(u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
-	resp["user"] = bytes
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }
