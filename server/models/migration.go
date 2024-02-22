@@ -63,7 +63,7 @@ func CreateMigrationFile(name, folder string, t time.Time) error {
 	return err
 }
 
-func getMigration(info os.FileInfo) (err error, m Migration) {
+func GetMigration(info os.FileInfo) (err error, m Migration) {
 	filename := info.Name()
 	splitted := strings.Split(info.Name(), "_")
 	version, err := strconv.Atoi(splitted[0])
@@ -89,7 +89,7 @@ func getMigrations() (err error, keys []int, list map[int64]Migration) {
 			helpers.LogError(err)
 		}
 		if !info.IsDir() {
-			err, migration := getMigration(info)
+			err, migration := GetMigration(info)
 			if err != nil {
 				helpers.LogError(err)
 				return err
