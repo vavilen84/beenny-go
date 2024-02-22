@@ -1,17 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/handlers"
-	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
 	"log"
-	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -29,17 +25,9 @@ var AppCommands = []*cobra.Command{
 		Use:  "migration-create",
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			now := time.Now()
-			nowUnix := now.Unix()
-
-			file := filepath.Join(
-				os.Getenv("APP_ROOT"),
-				constants.MigrationsFolder,
-				fmt.Sprintf("%d_%s.up.sql", nowUnix, args[0]),
-			)
-			_, err := os.Create(file)
+			err := models.CreateMigrationFile(args[0], constants.MigrationsFolder, time.Now())
 			if err != nil {
-				helpers.LogError(err)
+				log.Fatal(err)
 			}
 		},
 	},

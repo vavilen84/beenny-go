@@ -60,7 +60,11 @@ func (c *DropController) Create(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
-
-	resp := make(dto.ResponseData)
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	bytes, err := json.Marshal(m)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+		return
+	}
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }

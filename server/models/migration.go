@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/helpers"
@@ -39,6 +40,27 @@ func (Migration) GetValidationRules() interface{} {
 
 func (Migration) GetValidator() interface{} {
 	return validator.New()
+}
+
+func GetMigrationFilename(name string, t time.Time) string {
+	return fmt.Sprintf("%d_%s.up.sql", t.Unix(), name)
+}
+
+func GetMigrationFilePath(name, folder string, t time.Time) string {
+	return filepath.Join(
+		os.Getenv("APP_ROOT"),
+		folder,
+		GetMigrationFilename(name, t),
+	)
+}
+
+func CreateMigrationFile(name, folder string, t time.Time) error {
+	file := GetMigrationFilePath(name, folder, t)
+	_, err := os.Create(file)
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return err
 }
 
 func getMigration(info os.FileInfo) (err error, m Migration) {

@@ -1,13 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	awsClient "github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/constants"
-	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
@@ -85,6 +85,11 @@ func (c *DropController) UploadPreviewImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	resp := make(dto.ResponseData)
-	c.WriteSuccessResponse(w, resp, http.StatusOK)
+	bytes, err := json.Marshal(m)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+		return
+	}
+	c.WriteSuccessResponse(w, bytes, http.StatusOK)
 }
