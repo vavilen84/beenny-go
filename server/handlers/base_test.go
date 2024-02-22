@@ -153,6 +153,7 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 
 	assert.NotEmpty(t, u.PasswordSalt)
 	assert.NotEmpty(t, u.EmailTwoFaCode)
+	assert.NotEmpty(t, u.Id)
 
 	assert.False(t, u.IsEmailVerified)
 
