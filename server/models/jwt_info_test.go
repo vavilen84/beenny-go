@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/mocks"
 	"github.com/vavilen84/beenny-go/validation"
 	"gorm.io/driver/mysql"
@@ -33,8 +34,13 @@ func TestInsertJWTInfo(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "UserId"), v["UserId"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "ExpiresAt"), v["ExpiresAt"][0].Message)
+
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "UserId"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "ExpiresAt"),
+	}
+	ok = helpers.AllStringsAreErrors(mustHaveErrors, v)
+	assert.True(t, ok)
 
 	// Calculate the duration of 24 hours
 	duration, err := time.ParseDuration("-24h")
@@ -55,7 +61,11 @@ func TestInsertJWTInfo(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.FutureErrorMsg, "ExpiresAt"), v["ExpiresAt"][0].Message)
+	mustHaveErrors = []string{
+		fmt.Sprintf(constants.FutureErrorMsg, "ExpiresAt"),
+	}
+	ok = helpers.AllStringsAreErrors(mustHaveErrors, v)
+	assert.True(t, ok)
 
 	// Calculate the duration of 24 hours
 	duration, err = time.ParseDuration("24h")

@@ -10,10 +10,9 @@ import (
 
 type BaseController struct{}
 
-func (*BaseController) WriteSuccessResponse(w http.ResponseWriter, data interface{}, status int) {
+func (*BaseController) WriteSuccessResponse(w http.ResponseWriter, data []byte, status int) {
 	resp := dto.Response{
-		Status: status,
-		Data:   data,
+		Data: data,
 	}
 	writeResponse(w, resp, status)
 }
@@ -25,6 +24,7 @@ func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err interface{}
 		helpers.LogError(e)
 	}
 	ok = false
+	errorsSlice := make([]string, 0)
 	errs, ok := err.(validation.Errors)
 	if ok {
 		formErrors := make(map[string][]string)
@@ -40,9 +40,9 @@ func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err interface{}
 			Status:     status,
 		}
 	} else {
+		errorsSlice = append(errorsSlice, e.Error())
 		resp = dto.Response{
-			Error:  e.Error(),
-			Status: status,
+			Errors: errorsSlice,
 		}
 	}
 	writeResponse(w, resp, status)

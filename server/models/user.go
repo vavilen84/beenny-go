@@ -11,23 +11,23 @@ import (
 )
 
 type User struct {
-	Id                          int    `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
-	FirstName                   string `json:"firstName"`
-	LastName                    string `json:"lastName"`
-	Email                       string `json:"email"`
-	Password                    string `json:"password"`
-	PasswordSalt                string
-	PasswordResetToken          string
-	PasswordResetTokenExpiresAt *time.Time
-	Role                        int `json:"role"`
-	IsEmailVerified             bool
-	CurrentCountry              string `json:"currentCountry"`
-	CountryOfBirth              string `json:"countryOfBirth"`
-	Gender                      string `json:"gender"`
-	Timezone                    string `json:"timezone"`
-	Birthday                    string `json:"birthday"`
-	Photo                       string `json:"photo"`
-	EmailTwoFaCode              string `json:"emailTwoFaCode"`
+	Id                          int        `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
+	FirstName                   string     `json:"firstName"`
+	LastName                    string     `json:"lastName"`
+	Email                       string     `json:"email"`
+	Password                    string     `json:"-"`
+	PasswordSalt                string     `json:"-"`
+	PasswordResetToken          string     `json:"-"`
+	PasswordResetTokenExpiresAt *time.Time `json:"-"`
+	Role                        int        `json:"role"`
+	IsEmailVerified             bool       `json:"isEmailVerified"`
+	CurrentCountry              string     `json:"currentCountry"`
+	CountryOfBirth              string     `json:"countryOfBirth"`
+	Gender                      string     `json:"gender"`
+	Timezone                    string     `json:"timezone"`
+	Birthday                    string     `json:"birthday"`
+	Photo                       string     `json:"photo"`
+	EmailTwoFaCode              string     `json:"-"`
 }
 
 func (m *User) TableName() string {

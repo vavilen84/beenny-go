@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/beenny-go/helpers"
@@ -11,8 +12,7 @@ import (
 func ValidateByScenario(scenario Scenario, m interfaces.Model) error {
 	validate := m.GetValidator().(*validator.Validate)
 	validationMap := m.GetValidationRules().(ScenarioRules)
-	var result error
-	errs := make(Errors)
+	var errs Errors
 	data := helpers.StructToMap(m)
 	for fieldName, validation := range validationMap[scenario] {
 		field, ok := data[fieldName]
@@ -21,8 +21,8 @@ func ValidateByScenario(scenario Scenario, m interfaces.Model) error {
 		}
 		err := validate.Var(field, string(validation))
 		if err != nil {
-			if _, ok := errs[fieldName]; !ok {
-				errs[fieldName] = make([]FieldError, 0)
+			if errs == nil {
+				errs = make(Errors, 0)
 			}
 			for _, e := range err.(validator.ValidationErrors) {
 				validationError := FieldError{
@@ -33,12 +33,10 @@ func ValidateByScenario(scenario Scenario, m interfaces.Model) error {
 					Param: e.Param(),
 				}
 				validationError.setErrorMessage()
-				errs[fieldName] = append(errs[fieldName], validationError)
+				newErr := errors.New(validationError.Message)
+				errs = append(errs, newErr)
 			}
 		}
 	}
-	if len(errs) > 0 {
-		return errs
-	}
-	return result
+	return errs
 }

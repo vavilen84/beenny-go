@@ -94,14 +94,9 @@ func getValidRegisterUserDTO() dto.Register {
 	}
 }
 
-func registerUser(t *testing.T, ts *httptest.Server) {
-	body := getValidRegisterUserDTO()
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/register", bytes.NewReader(bodyBytes))
+func verifyEmail(t *testing.T, ts *httptest.Server, u models.User) {
+	url := ts.URL + "/api/v1/security/verify-email?token=" + u.EmailTwoFaCode
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -131,14 +126,50 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
+}
 
-	responseBodyData, ok := registerResp.Data.(map[string]interface{})
+func registerUser(t *testing.T, ts *httptest.Server) models.User {
+	body := getValidRegisterUserDTO()
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/register", bytes.NewReader(bodyBytes))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("Failed to send request: %v", err)
+	}
+	defer res.Body.Close()
+
+	responseBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatalf("Error reading response body: %v", err)
+	}
+
+	responseBodyDataWrapper := dto.Response{}
+	err = json.Unmarshal(responseBody, &responseBodyDataWrapper)
+	if err != nil {
+		t.Fatalf("Error reading response body: %v", err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d but got %d", http.StatusOK, res.StatusCode)
+	}
+
+	assert.Equal(t, responseBodyDataWrapper.Status, http.StatusOK)
+	assert.Empty(t, responseBodyDataWrapper.Error)
+	assert.Empty(t, responseBodyDataWrapper.Errors)
+	assert.Empty(t, responseBodyDataWrapper.FormErrors)
+
+	responseBodyData, ok := responseBodyDataWrapper.Data.(map[string]interface{})
 	assert.True(t, ok)
-
-	jsonBytesData, err := json.Marshal(responseBodyData["user"])
-	assert.Nil(t, err)
 	u := models.User{}
-	err = json.Unmarshal(jsonBytesData, &u)
+	err = json.Unmarshal(responseBodyData["user"].([]byte), &u)
 	assert.Nil(t, err)
 
 	assert.Equal(t, body.FirstName, u.FirstName)
@@ -152,13 +183,14 @@ func registerUser(t *testing.T, ts *httptest.Server) {
 	assert.Equal(t, body.Email, u.Email)
 
 	assert.NotEmpty(t, u.PasswordSalt)
-	assert.NotEmpty(t, u.EmailTwoFaCode)
 	assert.NotEmpty(t, u.Id)
 
 	assert.False(t, u.IsEmailVerified)
 
 	passwordIsValid := password.Verify(body.Password, u.PasswordSalt, u.Password, nil)
 	assert.True(t, passwordIsValid)
+
+	return u
 }
 
 func loginUser(t *testing.T, ts *httptest.Server) string {

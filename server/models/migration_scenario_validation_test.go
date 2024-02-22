@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/validation"
 	"log"
 	"testing"
@@ -16,7 +17,11 @@ func TestMigration_ValidateOnCreate(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Version"), v["Version"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "Filename"), v["Filename"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "CreatedAt"), v["CreatedAt"][0].Message)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "Version"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "Filename"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "CreatedAt"),
+	}
+	ok = helpers.AllStringsAreErrors(mustHaveErrors, v)
+	assert.True(t, ok)
 }
