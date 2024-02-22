@@ -47,11 +47,7 @@ func GetMigrationFilename(name string, t time.Time) string {
 }
 
 func GetMigrationFilePath(name, folder string, t time.Time) string {
-	return filepath.Join(
-		os.Getenv("APP_ROOT"),
-		folder,
-		GetMigrationFilename(name, t),
-	)
+	return filepath.Join(folder, GetMigrationFilename(name, t))
 }
 
 func CreateMigrationFile(name, folder string, t time.Time) error {
@@ -80,10 +76,9 @@ func GetMigration(info os.FileInfo) (err error, m Migration) {
 	return
 }
 
-func getMigrations() (err error, keys []int, list map[int64]Migration) {
+func GetMigrations(folder string) (err error, keys []int, list map[int64]Migration) {
 	list = make(map[int64]Migration)
 	keys = make([]int, 0)
-	folder := path.Join(os.Getenv("APP_ROOT"), constants.MigrationsFolder)
 	err = filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			helpers.LogError(err)
@@ -108,8 +103,8 @@ func getMigrations() (err error, keys []int, list map[int64]Migration) {
 	return
 }
 
-func MigrateUp(db *gorm.DB) error {
-	err, keys, list := getMigrations()
+func MigrateUp(db *gorm.DB, folder string) error {
+	err, keys, list := GetMigrations(folder)
 	for _, k := range keys {
 		err = apply(db, k, list)
 		if err != nil {

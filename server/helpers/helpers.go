@@ -3,9 +3,11 @@ package helpers
 import (
 	"errors"
 	"fmt"
+	"github.com/vavilen84/beenny-go/constants"
 	"log"
 	"math/rand"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -128,4 +130,8 @@ func AllStringsAreErrors(strings []string, errors []error) bool {
 		}
 	}
 	return len(results) == len(strings) && len(strings) == len(errors)
+}
+
+func GetMigrationsFolder() string {
+	return path.Join(os.Getenv("APP_ROOT"), constants.MigrationsFolder)
 }

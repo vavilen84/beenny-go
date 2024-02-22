@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
-	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/handlers"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
 	"log"
@@ -25,7 +25,7 @@ var AppCommands = []*cobra.Command{
 		Use:  "migration-create",
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := models.CreateMigrationFile(args[0], constants.MigrationsFolder, time.Now())
+			err := models.CreateMigrationFile(args[0], helpers.GetMigrationsFolder(), time.Now())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -40,7 +40,7 @@ var AppCommands = []*cobra.Command{
 			if err != nil {
 				log.Println(err)
 			}
-			err = models.MigrateUp(db)
+			err = models.MigrateUp(db, helpers.GetMigrationsFolder())
 			if err != nil {
 				log.Println(err)
 			}
@@ -56,7 +56,7 @@ var AppCommands = []*cobra.Command{
 				log.Println(err)
 				panic(err)
 			}
-			err = models.MigrateUp(db)
+			err = models.MigrateUp(db, helpers.GetMigrationsFolder())
 			if err != nil {
 				log.Println(err)
 			}
