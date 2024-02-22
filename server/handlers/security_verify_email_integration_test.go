@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestVerifyEmail_OK(t *testing.T) {
+func Test_Integration_VerifyEmail_OK(t *testing.T) {
 
 	ts := initApp()
 	defer ts.Close()
