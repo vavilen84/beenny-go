@@ -2,5 +2,6 @@
 .env
 server/.env
 server/app
-server/tmp/build-errors.log
+server/tmp
+!server/tmp/.gitignore
 docker/mysql/*

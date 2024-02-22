@@ -1,12 +1,15 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/stretchr/testify/mock"
 	"github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/mocks"
 	"github.com/vavilen84/beenny-go/store"
+	"github.com/vavilen84/beenny-go/test"
+	"log"
 	"testing"
 )
 
@@ -38,7 +41,13 @@ func Test_Unit_Security_Register_ok(t *testing.T) {
 	aws.SetSESClient(mockSESclient)
 	mockSESclient.On("SendEmail", mock.Anything).Return(&ses.SendEmailOutput{}, nil)
 
-	registerUser(t, ts)
+	body := getValidRegisterUserDTO()
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	test.RegisterUser(t, ts, bodyBytes)
 
 	mockSESclient.AssertCalled(t, "SendEmail", mock.Anything)
 	mockSESclient.AssertExpectations(t)
