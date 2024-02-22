@@ -50,6 +50,11 @@ func InsertJWTInfo(db *gorm.DB, m *JWTInfo) (err error) {
 		helpers.LogError(errs)
 		return errs
 	}
+	_, err = FindUserById(db, m.UserId)
+	if err != nil {
+		helpers.LogError(err)
+		return err
+	}
 	err = db.Create(m).Error
 	if err != nil {
 		helpers.LogError(err)
