@@ -36,3 +36,14 @@ func Test_Unit_ScenarioCreate_notOk_expiredInPast(t *testing.T) {
 	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
 	assert.True(t, ok)
 }
+
+func Test_Unit_ScenarioCreate_ok(t *testing.T) {
+	future := time.Now().Add(1 * time.Hour)
+	u := JWTInfo{
+		UserId:    15,
+		Secret:    "123123123",
+		ExpiresAt: future,
+	}
+	errs := validation.ValidateByScenario(constants.ScenarioCreate, u)
+	assert.Empty(t, errs)
+}
