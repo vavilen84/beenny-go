@@ -76,26 +76,26 @@ func Test_Unit_GetMigrations_ok(t *testing.T) {
 	test.LoadEnv()
 	now := time.Now()
 	name := "create_users_table"
-	tmpFolder := path.Join("tmp", "test_migration")
-	tmpTestAppMigrationsFolder := path.Join(os.Getenv("APP_ROOT"), tmpFolder)
-	os.Mkdir(tmpTestAppMigrationsFolder, 0777)
-	err := models.CreateMigrationFile(name, tmpFolder, now)
+	migration1 := createTestMigrationFile(t, name, now)
+
+	future := time.Now().Add(1 * time.Hour)
+	name2 := "create_jwt_info_table"
+	migration2 := createTestMigrationFile(t, name2, future)
+
+	err, keys, list := models.GetMigrations(getTestMigrationsFolder())
 	assert.Nil(t, err)
-	p := models.GetMigrationFilePath(name, tmpFolder, now)
-	_, err = os.Stat(p)
-	assert.False(t, os.IsNotExist(err))
+	assert.Equal(t, 2, len(keys))
+	assert.Equal(t, int(now.Unix()), keys[0])
+	assert.Equal(t, int(future.Unix()), keys[1])
 
-	err = filepath.Walk(tmpTestAppMigrationsFolder, func(path string, info os.FileInfo, err error) error {
-		assert.Nil(t, err)
-		if !info.IsDir() {
-			err, m := models.GetMigration(info)
-			assert.Nil(t, err)
-			assert.Equal(t, m.Version, now.Unix())
-			assert.Equal(t, m.Filename, models.GetMigrationFilename(name, now))
-			assert.NotEmpty(t, m.CreatedAt)
-		}
-		return nil
-	})
+	assert.Equal(t, list[now.Unix()].Version, now.Unix())
+	assert.Equal(t, list[now.Unix()].Filename, models.GetMigrationFilename(name, now))
+	assert.NotEmpty(t, list[now.Unix()].CreatedAt)
 
-	os.Remove(p)
+	assert.Equal(t, list[future.Unix()].Version, future.Unix())
+	assert.Equal(t, list[future.Unix()].Filename, models.GetMigrationFilename(name2, future))
+	assert.NotEmpty(t, list[future.Unix()].CreatedAt)
+
+	os.Remove(migration1)
+	os.Remove(migration2)
 }
