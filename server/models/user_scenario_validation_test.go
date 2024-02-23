@@ -152,3 +152,21 @@ func Test_User_ScenarioLoginTwoFaStepOne_Ok(t *testing.T) {
 	errs := validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, u)
 	assert.Nil(t, errs)
 }
+
+func Test_User_ScenarioSetUserPhoto_notOk(t *testing.T) {
+	u := User{}
+	errs := validation.ValidateByScenario(constants.ScenarioSetUserPhoto, u)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "Photo"),
+	}
+	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
+	assert.True(t, ok)
+}
+
+func Test_User_ScenarioSetUserPhoto_ok(t *testing.T) {
+	u := User{
+		Photo: "2024/02/23/9edfcc70-3e89-447f-833b-954208f9463a.png",
+	}
+	errs := validation.ValidateByScenario(constants.ScenarioSetUserPhoto, u)
+	assert.Nil(t, errs)
+}

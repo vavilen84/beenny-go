@@ -284,3 +284,24 @@ func Test_SetForgotPasswordData_ok(t *testing.T) {
 	assert.NotEmpty(t, u.PasswordResetToken)
 	assert.NotEmpty(t, u.PasswordResetTokenExpiresAt)
 }
+
+func Test_SetUserPhoto_ok(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	sql := "UPDATE users"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
+
+	m := GetTestValidUserModel()
+	err = SetUserPhoto(gormDB, &m)
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
