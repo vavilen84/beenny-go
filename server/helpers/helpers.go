@@ -135,3 +135,7 @@ func AllStringsAreErrors(strings []string, errors []error) bool {
 func GetMigrationsFolder() string {
 	return path.Join(os.Getenv("APP_ROOT"), constants.MigrationsFolder)
 }
+
+func GetFixturesFolder() string {
+	return path.Join(os.Getenv("APP_ROOT"), "fixtures")
+}

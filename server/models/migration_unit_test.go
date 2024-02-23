@@ -2,8 +2,12 @@ package models_test
 
 import (
 	"fmt"
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/beenny-go/helpers"
+	"github.com/vavilen84/beenny-go/mocks"
 	"github.com/vavilen84/beenny-go/models"
+	"github.com/vavilen84/beenny-go/store"
 	"github.com/vavilen84/beenny-go/test"
 	"os"
 	"path"
@@ -98,4 +102,83 @@ func Test_Unit_GetMigrations_ok(t *testing.T) {
 
 	os.Remove(migration1)
 	os.Remove(migration2)
+}
+
+func Test_Unit_CreateMigrationsTableIfNotExists_ok(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	sql := "CREATE TABLE IF NOT EXISTS migrations"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
+
+	err = models.CreateMigrationsTableIfNotExists(gormDB)
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_Unit_InsertMigration_ok(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	sql := "INSERT INTO `migrations`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	now := time.Now()
+	m := models.Migration{
+		CreatedAt: time.Now().Unix(),
+		Filename:  "create_users_table",
+		Version:   now.Unix(),
+	}
+	err = models.InsertMigration(gormDB, &m)
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_Unit_PerformMigrateTx_ok(t *testing.T) {
+	test.LoadEnv()
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+
+	sqlMock.ExpectBegin()
+
+	sql := "INSERT INTO `migrations`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	sql = "CREATE TABLE `users`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	sqlMock.ExpectCommit()
+
+	m := models.Migration{
+		CreatedAt: int64(1708526378),
+		Filename:  "1708526378_add_users_table.up.sql",
+		Version:   int64(1708526378),
+	}
+	err = models.PerformMigrateTx(gormDB, m, helpers.GetFixturesFolder())
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
 }

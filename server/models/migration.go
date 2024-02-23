@@ -106,7 +106,7 @@ func GetMigrations(folder string) (err error, keys []int, list map[int64]Migrati
 func MigrateUp(db *gorm.DB, folder string) error {
 	err, keys, list := GetMigrations(folder)
 	for _, k := range keys {
-		err = apply(db, k, list)
+		err = Apply(db, k, list, folder)
 		if err != nil {
 			helpers.LogError(err)
 			return err
@@ -115,7 +115,7 @@ func MigrateUp(db *gorm.DB, folder string) error {
 	return nil
 }
 
-func performMigrateTx(db *gorm.DB, m Migration) error {
+func PerformMigrateTx(db *gorm.DB, m Migration, folder string) error {
 	tx := db.Begin()
 	if tx.Error != nil {
 		helpers.LogError(tx.Error)
@@ -127,7 +127,7 @@ func performMigrateTx(db *gorm.DB, m Migration) error {
 		return tx.Error
 	}
 
-	filename := path.Join(os.Getenv("APP_ROOT"), constants.MigrationsFolder, m.Filename)
+	filename := path.Join(folder, m.Filename)
 	content, readErr := os.ReadFile(filename)
 	if readErr != nil {
 		tx.Rollback()
@@ -149,7 +149,7 @@ func performMigrateTx(db *gorm.DB, m Migration) error {
 	return nil
 }
 
-func apply(db *gorm.DB, k int, list map[int64]Migration) error {
+func Apply(db *gorm.DB, k int, list map[int64]Migration, folder string) error {
 	m := list[int64(k)]
 	mm := Migration{}
 	err := db.Where("version = ?", m.Version).First(&mm).Error
@@ -159,7 +159,7 @@ func apply(db *gorm.DB, k int, list map[int64]Migration) error {
 			helpers.LogError(validationErr)
 			return validationErr
 		}
-		err = performMigrateTx(db, m)
+		err = PerformMigrateTx(db, m, folder)
 		if err != nil {
 			helpers.LogError(err)
 			return err
@@ -171,10 +171,10 @@ func apply(db *gorm.DB, k int, list map[int64]Migration) error {
 }
 
 func InsertMigration(db *gorm.DB, m *Migration) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	err = db.Create(m).Error
 	if err != nil {
