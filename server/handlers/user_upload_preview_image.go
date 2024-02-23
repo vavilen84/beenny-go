@@ -15,11 +15,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
-func (c *DropController) UploadPreviewImage(w http.ResponseWriter, r *http.Request) {
-	_, ok := r.Context().Value("user").(*models.User)
+func (c *UserController) UploadPreviewImage(w http.ResponseWriter, r *http.Request) {
+	u, ok := r.Context().Value("user").(*models.User)
 	if !ok {
 		err := errors.New("No logged in user")
 		helpers.LogError(err)
@@ -27,20 +26,12 @@ func (c *DropController) UploadPreviewImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	dropIdStr := r.PostFormValue("dropId")
-	dropId, err := strconv.Atoi(dropIdStr)
-	if err != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.UnauthorizedError, http.StatusBadRequest)
-		return
-	}
-
 	db := store.GetDB()
-	m, err := models.FindDropById(db, dropId)
+	_, err := models.FindUserById(db, u.Id)
 	if err != nil {
 		helpers.LogError(err)
 		if err == gorm.ErrRecordNotFound {
-			err = errors.New(fmt.Sprintf("drop with id %d not found", dropId))
+			err = errors.New(fmt.Sprintf("user with id %d not found", u.Id))
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {
 			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
@@ -77,15 +68,15 @@ func (c *DropController) UploadPreviewImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	m.PreviewImg = fileName
-	err = models.UpdateDrop(db, m)
+	u.Photo = fileName
+	err = models.SetUserPhoto(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 
-	bytes, err := json.Marshal(m)
+	bytes, err := json.Marshal(u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)

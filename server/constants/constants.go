@@ -76,6 +76,7 @@ const (
 	ScenarioChangePassword    = "change-password"
 	ScenarioResetPassword     = "reset-password"
 	ScenarioVerifyEmail       = "verify-email"
+	ScenarioSetUserPhoto      = "set-user-photo"
 	ScenarioTwoFaLoginStepOne = "two-fa-login-step-one"
 	ScenarioTwoFaLoginStepTwo = "two-fa-login-step-two"
 )

@@ -1,5 +1,5 @@
 package handlers
 
-type DropController struct {
+type UserController struct {
 	BaseController
 }

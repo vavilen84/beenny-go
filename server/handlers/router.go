@@ -56,11 +56,9 @@ func BuildV1Paths() *chi.Mux {
 
 		r.With(UserAuth).Post("/change-password", c.ChangePassword)
 	})
-	r.Route("/drop", func(r chi.Router) {
-		c := DropController{}
+	r.Route("/user", func(r chi.Router) {
+		c := UserController{}
 
-		r.With(UserAuth).Post("/create", c.Create)
-		r.With(UserAuth).Post("/update", c.Update)
 		r.With(UserAuth).Post("/upload-preview-image", c.UploadPreviewImage)
 	})
 	return r

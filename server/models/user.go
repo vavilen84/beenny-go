@@ -72,6 +72,9 @@ func (User) GetValidationRules() interface{} {
 		constants.ScenarioLoginTwoFaStepOne: validation.FieldRules{
 			"EmailTwoFaCode": "required,min=6,max=6",
 		},
+		constants.ScenarioSetUserPhoto: validation.FieldRules{
+			"Photo": "required",
+		},
 	}
 }
 
@@ -147,6 +150,16 @@ func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 	}
 	sql := "UPDATE users SET is_email_verified = ?, email_two_fa_code = ? WHERE id = ?"
 	return db.Exec(sql, m.IsEmailVerified, m.EmailTwoFaCode, m.Id).Error
+}
+
+func SetUserPhoto(db *gorm.DB, m *User) (err error) {
+	errs := validation.ValidateByScenario(constants.ScenarioSetUserPhoto, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
+	}
+	sql := "UPDATE users SET photo = ? WHERE id = ?"
+	return db.Exec(sql, m.Photo, m.Id).Error
 }
 
 func UserResetPassword(db *gorm.DB, m *User) (err error) {
