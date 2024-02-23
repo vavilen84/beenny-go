@@ -18,7 +18,7 @@ func (ForgotPassword) GetValidator() interface{} {
 func (ForgotPassword) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioForgotPassword: validation.FieldRules{
-			"Email": "min=3,max=255,email,required",
+			"Email": "required,max=255,email,",
 		},
 	}
 }
