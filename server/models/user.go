@@ -91,16 +91,16 @@ func (User) GetValidator() interface{} {
 }
 
 func InsertUser(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	m.EncodePassword()
-	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	err = db.Create(m).Error
 	if err != nil {
@@ -110,19 +110,19 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 }
 
 func ForgotPassword(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioForgotPassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioForgotPassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	sql := "UPDATE users SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
 	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpiresAt, m.Id).Error
 }
 
 func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, *m)
-	if err != nil {
-		helpers.LogError(err)
+	errs := validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, *m)
+	if errs != nil {
+		helpers.LogError(errs)
 		return
 	}
 	sql := "UPDATE users SET email_two_fa_code = ? WHERE id = ?"
@@ -140,42 +140,42 @@ func ResetResetPasswordToken(db *gorm.DB, m *User) (err error) {
 }
 
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	sql := "UPDATE users SET is_email_verified = ?, email_two_fa_code = ? WHERE id = ?"
 	return db.Exec(sql, m.IsEmailVerified, m.EmailTwoFaCode, m.Id).Error
 }
 
 func UserResetPassword(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioResetPassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioResetPassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	m.EncodePassword()
-	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	sql := "UPDATE users SET password = ?, password_salt = ? WHERE id = ?"
 	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
 }
 
 func UserChangePassword(db *gorm.DB, m *User) (err error) {
-	err = validation.ValidateByScenario(constants.ScenarioChangePassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs := validation.ValidateByScenario(constants.ScenarioChangePassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	m.EncodePassword()
-	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
-	if err != nil {
-		helpers.LogError(err)
-		return
+	errs = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if errs != nil {
+		helpers.LogError(errs)
+		return errs
 	}
 	sql := "UPDATE users SET password = ?, password_salt = ? WHERE id = ?"
 	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
