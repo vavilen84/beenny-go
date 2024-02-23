@@ -224,5 +224,33 @@ func Test_Unit_Apply_ok(t *testing.T) {
 }
 
 func Test_Unit_MigrateUp_ok(t *testing.T) {
+	test.LoadEnv()
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
 
+	rows := sqlmock.NewRows([]string{"id"}) // no rows
+	expectedSQL := "SELECT * FROM `migrations`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	sqlMock.ExpectBegin()
+
+	sql := "INSERT INTO `migrations`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	sql = "CREATE TABLE `users`"
+	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	sqlMock.ExpectCommit()
+
+	err = models.MigrateUp(gormDB, helpers.GetFixturesFolder())
+	assert.Nil(t, err)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
 }
