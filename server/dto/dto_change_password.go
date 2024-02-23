@@ -25,8 +25,8 @@ func (ChangePassword) GetValidator() interface{} {
 func (ChangePassword) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioChangePassword: validation.FieldRules{
-			"OldPassword": "min=8,max=255,required,customPasswordValidator",
-			"NewPassword": "min=8,max=255,required,customPasswordValidator",
+			"OldPassword": "required,max=255,customPasswordValidator",
+			"NewPassword": "required,max=255,customPasswordValidator",
 		},
 	}
 }
