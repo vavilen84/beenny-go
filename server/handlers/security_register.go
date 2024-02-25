@@ -67,10 +67,13 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		EmailTwoFaCode:  emailVerificationToken,
 	}
 
-	err = models.InsertUser(db, u)
+	err, status := models.InsertUser(db, u)
 	if err != nil {
+		if status == http.StatusInternalServerError {
+			err = constants.ServerError
+		}
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusBadRequest)
+		c.WriteErrorResponse(w, err, status)
 		return
 	}
 

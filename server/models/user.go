@@ -7,6 +7,7 @@ import (
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/validation"
 	"gorm.io/gorm"
+	"net/http"
 	"time"
 )
 
@@ -93,23 +94,23 @@ func (User) GetValidator() interface{} {
 	return v
 }
 
-func InsertUser(db *gorm.DB, m *User) (err error) {
+func InsertUser(db *gorm.DB, m *User) (err error, status int) {
 	errs := validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if errs != nil {
 		helpers.LogError(errs)
-		return errs
+		return errs, http.StatusBadRequest
 	}
 	m.EncodePassword()
 	errs = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if errs != nil {
 		helpers.LogError(errs)
-		return errs
+		return errs, http.StatusBadRequest
 	}
 	err = db.Create(m).Error
 	if err != nil {
 		helpers.LogError(err)
 	}
-	return
+	return err, http.StatusInternalServerError
 }
 
 func ForgotPassword(db *gorm.DB, m *User) (err error) {
