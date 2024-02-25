@@ -2,13 +2,13 @@ package handlers_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/constants"
-	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/mocks"
 	"github.com/vavilen84/beenny-go/store"
 	"github.com/vavilen84/beenny-go/test"
@@ -68,16 +68,41 @@ func Test_Unit_Security_Register_notOk_can_not_parse_body(t *testing.T) {
 	ts := test.MakeTestServer()
 	defer ts.Close()
 
-	wrongBody := dto.ChangePassword{}
-	bodyBytes, err := json.Marshal(wrongBody)
-	if err != nil {
-		log.Fatal(err)
-	}
-	bodyBytes = make([]byte, 0)
+	bodyBytes := make([]byte, 0)
 
 	resp := test.Post(t, ts, constants.RegisterUserURL, bodyBytes, http.StatusBadRequest)
 	assert.NotEmpty(t, resp.Errors)
 	assert.Equal(t, constants.BadRequestError.Error(), resp.Errors[0])
+	assert.Nil(t, resp.Data)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func Test_Unit_Security_Register_notOk_email_is_required(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+	store.SetMockDb(gormDB)
+
+	ts := test.MakeTestServer()
+	defer ts.Close()
+
+	body := test.GetValidRegisterUserDTO()
+	body.Email = "" // empty email
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resp := test.Post(t, ts, constants.RegisterUserURL, bodyBytes, http.StatusBadRequest)
+	assert.NotEmpty(t, resp.Errors)
+	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), resp.Errors[0])
 	assert.Nil(t, resp.Data)
 
 	if err := sqlMock.ExpectationsWereMet(); err != nil {

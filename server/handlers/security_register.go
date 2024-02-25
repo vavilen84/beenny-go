@@ -27,8 +27,8 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	errs := validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
 	if errs != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusBadRequest)
+		helpers.LogError(errs)
+		c.WriteErrorResponse(w, errs, http.StatusBadRequest)
 		return
 	}
 	if dtoModel.Password != dtoModel.ConfirmPassword {
