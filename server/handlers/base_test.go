@@ -5,22 +5,16 @@ import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/auth"
-	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
+	"github.com/vavilen84/beenny-go/test"
 	"gorm.io/gorm"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-)
-
-const (
-	// user is SES verified
-	registerUserEmail    = "vladimir.teplov@gmail.com"
-	registerUserPassword = "testTEST123*"
 )
 
 type TestRegisterResp struct {
@@ -49,23 +43,6 @@ type TestTwoFaLoginSecondResp struct {
 	Error      string                            `json:"error"`
 	Errors     map[string][]string               `json:"errors"`
 	FormErrors map[string][]string               `json:"formErrors"`
-}
-
-func getValidRegisterUserDTO() dto.Register {
-	return dto.Register{
-		FirstName:       "John",
-		LastName:        "Dou",
-		CurrentCountry:  "UA",
-		CountryOfBirth:  "UA",
-		Gender:          constants.GenderMale,
-		Timezone:        "US/Arizona",
-		Birthday:        "1984-01-23",
-		Photo:           "/2024/01/23/s09d8fs09dfu.jpg",
-		Email:           registerUserEmail,
-		Password:        registerUserPassword,
-		ConfirmPassword: registerUserPassword,
-		AgreeTerms:      true,
-	}
 }
 
 func verifyEmail(t *testing.T, ts *httptest.Server, u models.User) {
@@ -110,7 +87,7 @@ func loginUser(t *testing.T, ts *httptest.Server) string {
 
 func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 	db := store.GetDB()
-	u, err := models.FindUserByEmail(db, registerUserEmail)
+	u, err := models.FindUserByEmail(db, test.TestUserEmail)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,8 +139,8 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server) {
 
 	body := dto.TwoFaLoginStepOne{
-		Email:    registerUserEmail,
-		Password: registerUserPassword,
+		Email:    test.TestUserEmail,
+		Password: test.TestUserPassword,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {

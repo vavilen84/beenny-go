@@ -18,10 +18,10 @@ func InitTestApp() *httptest.Server {
 	if err := db.Exec("delete from `users`").Error; err != nil {
 		fmt.Println("Error deleting entities:", err)
 	}
-	return makeTestServer()
+	return MakeTestServer()
 }
 
-func makeTestServer() *httptest.Server {
+func MakeTestServer() *httptest.Server {
 	handler := handlers.MakeHandler()
 	ts := httptest.NewServer(handler)
 	return ts
