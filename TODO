@@ -1,1 +1,3 @@
 - add status field to user models tests
+- add send email verification handler
+- add ses negative tests
