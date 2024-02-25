@@ -18,7 +18,7 @@ func (TwoFaLoginStepTwo) GetValidator() interface{} {
 func (TwoFaLoginStepTwo) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioTwoFaLoginStepTwo: validation.FieldRules{
-			"EmailTwoFaCode": "min=6,max=6,required",
+			"EmailTwoFaCode": "max=6,required",
 		},
 	}
 }
