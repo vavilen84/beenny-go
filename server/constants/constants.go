@@ -10,6 +10,8 @@ var (
 	BadRequestError    = errors.New("Bad Request")
 	UnauthorizedError  = errors.New("Unauthorized")
 	PasswordsDontMatch = errors.New("Passwords don't match")
+
+	UserAlreadyRegisteredFormat = "user with email %s already exists"
 )
 
 const (

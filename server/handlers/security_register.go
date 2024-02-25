@@ -45,7 +45,7 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		err := errors.New(fmt.Sprintf("user with email %s already exists", dtoModel.Email))
+		err := errors.New(fmt.Sprintf(constants.UserAlreadyRegisteredFormat, dtoModel.Email))
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return

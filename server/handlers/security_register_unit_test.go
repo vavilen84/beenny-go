@@ -139,3 +139,36 @@ func Test_Unit_Security_Register_notOk_passwords_dont_match(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+
+func Test_Unit_Security_Register_notOk_user_already_registered(t *testing.T) {
+	customMatcher := mocks.CustomMatcher{}
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	gormDB := store.GetMockDB(db)
+	store.SetMockDb(gormDB)
+
+	ts := test.MakeTestServer()
+	defer ts.Close()
+
+	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
+	expectedSQL := "SELECT * FROM `users`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
+	body := test.GetValidRegisterUserDTO()
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resp := test.Post(t, ts, constants.RegisterUserURL, bodyBytes, http.StatusBadRequest)
+	assert.NotEmpty(t, resp.Errors)
+	assert.Equal(t, fmt.Sprintf(constants.UserAlreadyRegisteredFormat, body.Email), resp.Errors[0])
+	assert.Nil(t, resp.Data)
+
+	if err := sqlMock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
