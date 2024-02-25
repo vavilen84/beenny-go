@@ -25,8 +25,8 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	err = validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
-	if err != nil {
+	errs := validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
+	if errs != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return

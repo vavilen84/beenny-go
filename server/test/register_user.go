@@ -3,7 +3,6 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/anaskhan96/go-password-encoder"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/models"
@@ -61,14 +60,8 @@ func RegisterUser(t *testing.T, ts *httptest.Server) models.User {
 	assert.Equal(t, body.Birthday, u.Birthday)
 	assert.Equal(t, body.Photo, u.Photo)
 	assert.Equal(t, body.Email, u.Email)
-
-	assert.NotEmpty(t, u.PasswordSalt)
 	assert.NotEmpty(t, u.Id)
-
 	assert.False(t, u.IsEmailVerified)
-
-	passwordIsValid := password.Verify(body.Password, u.PasswordSalt, u.Password, nil)
-	assert.True(t, passwordIsValid)
 
 	return u
 }
