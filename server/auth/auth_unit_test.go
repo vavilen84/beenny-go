@@ -58,6 +58,10 @@ func Test_insertJWTInfo_ok(t *testing.T) {
 	defer db.Close()
 	gormDB := store.GetMockDB(db)
 
+	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
+	expectedSQL := "SELECT * FROM `users`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
+
 	sql := "INSERT INTO `jwt_info`"
 	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(2, 1))
 
@@ -81,6 +85,10 @@ func Test_CreateJWT_ok(t *testing.T) {
 	}
 	defer db.Close()
 	gormDB := store.GetMockDB(db)
+
+	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
+	expectedSQL := "SELECT * FROM `users`"
+	sqlMock.ExpectQuery(expectedSQL).WillReturnRows(rows)
 
 	sql := "INSERT INTO `jwt_info`"
 	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(2, 1))
