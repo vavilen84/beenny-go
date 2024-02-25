@@ -6,7 +6,6 @@ import (
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/validation"
-	"log"
 	"testing"
 )
 
@@ -30,12 +29,12 @@ func Test_DTO_resetPassword_notOk_2(t *testing.T) {
 		Token:       "098sdf",
 		NewPassword: "testtest",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
-	v, ok := err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
+	errs := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "NewPassword"),
 	}
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["NewPassword"][0].Message)
+	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
+	assert.True(t, ok)
 }
 
 func Test_DTO_resetPassword_ok(t *testing.T) {
@@ -43,6 +42,6 @@ func Test_DTO_resetPassword_ok(t *testing.T) {
 		Token:       "098sdf",
 		NewPassword: "testTEST123*",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
-	assert.Nil(t, err)
+	errs := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
+	assert.Nil(t, errs)
 }
