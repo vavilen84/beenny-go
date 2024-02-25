@@ -14,7 +14,7 @@ func Test_Register_notOk_1(t *testing.T) {
 	errs := validation.ValidateByScenario(constants.ScenarioRegister, u)
 
 	mustHaveErrors := []string{
-		fmt.Sprintf(constants.EmailErrorMsg, "Email"),
+		fmt.Sprintf(constants.EmailErrorMsg),
 		fmt.Sprintf(constants.RequiredErrorMsg, "FirstName"),
 		fmt.Sprintf(constants.RequiredErrorMsg, "LastName"),
 		fmt.Sprintf(constants.RequiredErrorMsg, "Photo"),

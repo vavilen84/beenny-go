@@ -25,7 +25,7 @@ func Test_DTO_ForgotPassword_notOk_email(t *testing.T) {
 	}
 	errs := validation.ValidateByScenario(constants.ScenarioForgotPassword, u)
 	mustHaveErrors := []string{
-		fmt.Sprintf(constants.EmailErrorMsg, "Email"),
+		fmt.Sprintf(constants.EmailErrorMsg),
 	}
 	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
 	assert.True(t, ok)

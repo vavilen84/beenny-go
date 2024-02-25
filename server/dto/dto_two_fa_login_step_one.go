@@ -25,7 +25,7 @@ func (TwoFaLoginStepOne) GetValidator() interface{} {
 func (TwoFaLoginStepOne) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioTwoFaLoginStepOne: validation.FieldRules{
-			"Email":    "max=255,email,required",
+			"Email":    "required,max=255,email",
 			"Password": "max=255,required,customPasswordValidator",
 		},
 	}

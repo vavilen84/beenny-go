@@ -33,7 +33,7 @@ func (s *FieldError) setErrorMessage() {
 	case constants.LowerThanTag:
 		s.Message = fmt.Sprintf(constants.LowerThanTagErrorMsg, s.Param)
 	case constants.CustomPasswordValidatorTag:
-		s.Message = fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg)
+		s.Message = fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, s.Field)
 	default:
 		s.Message = "Undefined validation error"
 	}

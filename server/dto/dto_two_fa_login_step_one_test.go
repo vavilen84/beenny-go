@@ -30,7 +30,7 @@ func Test_DTO_TwoFaLoginStepOne_notOk_2(t *testing.T) {
 	}
 	errs := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
 	mustHaveErrors := []string{
-		fmt.Sprintf(constants.EmailErrorMsg, "Email"),
+		fmt.Sprintf(constants.EmailErrorMsg),
 		fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "Password"),
 	}
 	ok := helpers.AllErrorsExist(mustHaveErrors, errs)

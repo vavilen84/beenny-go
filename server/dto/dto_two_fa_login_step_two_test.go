@@ -27,7 +27,7 @@ func Test_DTO_TwoFaLoginStepTwo_notOk_2(t *testing.T) {
 	}
 	errs := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepTwo, u)
 	mustHaveErrors := []string{
-		fmt.Sprintf(constants.MaxValueErrorMsg, "EmailTwoFaCode"),
+		fmt.Sprintf(constants.MaxValueErrorMsg, "EmailTwoFaCode", "6"),
 	}
 	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
 	assert.True(t, ok)

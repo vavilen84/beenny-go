@@ -56,7 +56,7 @@ const (
 	EmailErrorMsg                      = "'Email' is not valid"
 	GreaterThanTagErrorMsg             = "value should be greater than %s"
 	LowerThanTagErrorMsg               = "value should be lower than %s"
-	CustomPasswordValidatorTagErrorMsg = "password must have: 1 small letter, 1 big letter, 1 special symbol, 1 digit and be at least 8 symbols long"
+	CustomPasswordValidatorTagErrorMsg = "'%s' must have: 1 small letter, 1 big letter, 1 special symbol, 1 digit and be at least 8 symbols long"
 
 	// Server
 	DefaultWriteTimout  = 60 * time.Second
