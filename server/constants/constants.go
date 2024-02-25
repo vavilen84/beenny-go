@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	ServerError       = errors.New("Server Error")
-	BadRequestError   = errors.New("Bad Request")
-	UnauthorizedError = errors.New("Unauthorized")
+	ServerError        = errors.New("Server Error")
+	BadRequestError    = errors.New("Bad Request")
+	UnauthorizedError  = errors.New("Unauthorized")
+	PasswordsDontMatch = errors.New("Passwords don't match")
 )
 
 const (

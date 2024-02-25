@@ -32,7 +32,7 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if dtoModel.Password != dtoModel.ConfirmPassword {
-		err = errors.New("Passwords don't match")
+		err = constants.PasswordsDontMatch
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
