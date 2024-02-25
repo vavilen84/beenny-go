@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/validation"
-	"log"
 	"testing"
 )
 
@@ -14,13 +14,13 @@ func Test_DTO_TwoFaLoginStepOne_notOk_1(t *testing.T) {
 		Email:    "",
 		Password: "",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
-	v, ok := err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
+	errs := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "Email"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "Password"),
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Email", "3"), v["Email"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Password", "8"), v["Password"][0].Message)
+	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
+	assert.True(t, ok)
 }
 
 func Test_DTO_TwoFaLoginStepOne_notOk_2(t *testing.T) {
@@ -28,13 +28,13 @@ func Test_DTO_TwoFaLoginStepOne_notOk_2(t *testing.T) {
 		Email:    "not_valid_email",
 		Password: "not_valid_pass",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
-	v, ok := err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
+	errs := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.EmailErrorMsg, "Email"),
+		fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "Password"),
 	}
-	assert.Equal(t, fmt.Sprintf(constants.EmailErrorMsg), v["Email"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg), v["Password"][0].Message)
+	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
+	assert.True(t, ok)
 }
 
 func Test_DTO_TwoFaLoginStepOne_ok(t *testing.T) {
@@ -42,6 +42,6 @@ func Test_DTO_TwoFaLoginStepOne_ok(t *testing.T) {
 		Email:    "user@example.com",
 		Password: "testTEST123*",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
-	assert.Nil(t, err)
+	errs := validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, u)
+	assert.Nil(t, errs)
 }
