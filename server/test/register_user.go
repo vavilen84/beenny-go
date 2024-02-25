@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/models"
 	"io"
@@ -21,7 +22,7 @@ func RegisterUser(t *testing.T, ts *httptest.Server) models.User {
 		log.Fatal(err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/register", bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest(http.MethodPost, ts.URL+constants.RegisterUserURL, bytes.NewReader(bodyBytes))
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -64,4 +65,33 @@ func RegisterUser(t *testing.T, ts *httptest.Server) models.User {
 	assert.False(t, u.IsEmailVerified)
 
 	return u
+}
+
+func Post(t *testing.T, ts *httptest.Server, url string, bodyBytes []byte, expectedResponseStatus int) dto.Response {
+	req, err := http.NewRequest(http.MethodPost, ts.URL+url, bytes.NewReader(bodyBytes))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("Failed to send request: %v", err)
+	}
+	defer res.Body.Close()
+
+	responseBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatalf("Error reading response body: %v", err)
+	}
+
+	responseBodyDataWrapper := dto.Response{}
+	err = json.Unmarshal(responseBody, &responseBodyDataWrapper)
+	if err != nil {
+		t.Fatalf("Error reading response body: %v", err)
+	}
+	if res.StatusCode != expectedResponseStatus {
+		t.Errorf("Expected status code %d but got %d", expectedResponseStatus, res.StatusCode)
+	}
+
+	return responseBodyDataWrapper
 }
