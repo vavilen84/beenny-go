@@ -25,8 +25,8 @@ func (ResetPassword) GetValidator() interface{} {
 func (ResetPassword) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioResetPassword: validation.FieldRules{
-			"Token":       "min=6,max=255,required",
-			"NewPassword": "min=8,max=255,required,customPasswordValidator",
+			"Token":       "max=255,required",
+			"NewPassword": "max=255,required,customPasswordValidator",
 		},
 	}
 }

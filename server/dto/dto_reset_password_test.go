@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/validation"
 	"log"
 	"testing"
@@ -14,13 +15,14 @@ func Test_DTO_resetPassword_notOk_1(t *testing.T) {
 		Token:       "",
 		NewPassword: "",
 	}
-	err := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
-	v, ok := err.(validation.Errors)
-	if !ok {
-		log.Fatalln("can not assert validation.Errors")
+	errs := validation.ValidateByScenario(constants.ScenarioResetPassword, u)
+
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "Token"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "NewPassword"),
 	}
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "Token", "6"), v["Token"][0].Message)
-	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "NewPassword", "8"), v["NewPassword"][0].Message)
+	ok := helpers.AllErrorsExist(mustHaveErrors, errs)
+	assert.True(t, ok)
 }
 
 func Test_DTO_resetPassword_notOk_2(t *testing.T) {
