@@ -110,7 +110,12 @@ func InsertUser(db *gorm.DB, m *User) (err error, status int) {
 	if err != nil {
 		helpers.LogError(err)
 	}
-	return err, http.StatusInternalServerError
+
+	status = http.StatusOK
+	if err != nil {
+		status = http.StatusInternalServerError
+	}
+	return err, status
 }
 
 func ForgotPassword(db *gorm.DB, m *User) (err error) {

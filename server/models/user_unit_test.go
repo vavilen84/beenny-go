@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/mocks"
 	"github.com/vavilen84/beenny-go/store"
+	"net/http"
 	"testing"
 	"time"
 )
@@ -22,8 +23,9 @@ func Test_Unit_InsertUser_ok(t *testing.T) {
 	sqlMock.ExpectExec(sql).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	m := GetTestValidUserModel()
-	err = InsertUser(gormDB, &m)
+	err, status := InsertUser(gormDB, &m)
 	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, status)
 
 	if err := sqlMock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
