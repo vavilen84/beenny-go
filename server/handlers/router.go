@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/vavilen84/beenny-go/constants"
+	"github.com/vavilen84/beenny-go/handlers/handlers_security"
 	"log"
 	"net/http"
 	"os"
@@ -45,7 +46,7 @@ func BuildV1Paths() *chi.Mux {
 	}))
 
 	r.Route("/security", func(r chi.Router) {
-		c := SecurityController{}
+		c := handlers_security.SecurityController{}
 
 		r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
 		r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
