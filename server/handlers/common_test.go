@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/beenny-go/auth"
 	"github.com/vavilen84/beenny-go/dto"
+	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
-	"github.com/vavilen84/beenny-go/test"
 	"gorm.io/gorm"
 	"io"
 	"log"
@@ -79,10 +79,10 @@ func verifyEmail(t *testing.T, ts *httptest.Server, u models.User) {
 	//assert.Empty(t, registerResp.FormErrors)
 }
 
-func loginUser(t *testing.T, ts *httptest.Server) string {
-	twoFaLoginFirstStep(t, ts)
-	jwtTok := twoFaLoginSecondStep(t, ts)
-	return jwtTok
+func loginUser(t *testing.T, ts *httptest.Server, userEmail, userPassword string) string {
+	twoFaLoginFirstStep(t, ts, userEmail, userPassword)
+	jwtToken := twoFaLoginSecondStep(t, ts, userEmail)
+	return jwtToken
 }
 
 func performRequestBase(req *http.Request, t *testing.T, authToken *string) ([]byte, int) {
@@ -92,7 +92,7 @@ func performRequestBase(req *http.Request, t *testing.T, authToken *string) ([]b
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		t.Fatalf("Error sending request:", err)
+		t.Fatalf("Error sending request: %v", err)
 	}
 	defer resp.Body.Close()
 
@@ -143,9 +143,9 @@ func get(t *testing.T, url string, authToken *string) ([]byte, int) {
 	return performRequest(req, t, authToken)
 }
 
-func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
+func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, userEmail string) (jwtToken string) {
 	db := store.GetDB()
-	u, err := models.FindUserByEmail(db, test.TestUserEmail)
+	u, err := models.FindUserByEmail(db, userEmail)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -153,36 +153,14 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 	body := dto.TwoFaLoginStepTwo{
 		EmailTwoFaCode: u.EmailTwoFaCode,
 	}
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	responseBody, statusCode := post(t, ts.URL+"/api/v1/security/two-fa-login-step-two", helpers.MarshalGeneric(body), nil)
 
-	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/two-fa-login-step-two", bytes.NewReader(bodyBytes))
-	if err != nil {
-		t.Fatalf("Failed to create request: %v", err)
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatalf("Failed to send request: %v", err)
-	}
-	defer res.Body.Close()
-
-	responseBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
+	if statusCode != http.StatusOK {
+		t.Errorf("Expected status code %d but got %d", http.StatusOK, statusCode)
 	}
 
 	twoFaLoginSecondStep := TestTwoFaLoginSecondResp{}
-	err = json.Unmarshal(responseBody, &twoFaLoginSecondStep)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code %d but got %d", http.StatusOK, res.StatusCode)
-	}
+	twoFaLoginSecondStep = helpers.UnmarshalGeneric(responseBody, twoFaLoginSecondStep)
 
 	assert.Equal(t, twoFaLoginSecondStep.Status, http.StatusOK)
 	assert.NotEmpty(t, twoFaLoginSecondStep.Data.Token)
@@ -194,42 +172,18 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 	return twoFaLoginSecondStep.Data.Token
 }
 
-func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server) {
-
+func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, userEmail, userPassword string) {
 	body := dto.TwoFaLoginStepOne{
-		Email:    test.TestUserEmail,
-		Password: test.TestUserPassword,
+		Email:    userEmail,
+		Password: userPassword,
 	}
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/two-fa-login-step-one", bytes.NewReader(bodyBytes))
-	if err != nil {
-		t.Fatalf("Failed to create request: %v", err)
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatalf("Failed to send request: %v", err)
-	}
-	defer res.Body.Close()
-
-	responseBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
+	responseBody, statusCode := post(t, ts.URL+"/api/v1/security/two-fa-login-step-one", helpers.MarshalGeneric(body), nil)
+	if statusCode != http.StatusOK {
+		t.Errorf("Expected status code %d but got %d", http.StatusOK, statusCode)
 	}
 
 	twoFaLoginStepFirst := TestTwoFaLoginFirstResp{}
-	err = json.Unmarshal(responseBody, &twoFaLoginStepFirst)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code %d but got %d", http.StatusOK, res.StatusCode)
-	}
+	twoFaLoginStepFirst = helpers.UnmarshalGeneric(responseBody, twoFaLoginStepFirst)
 
 	assert.Equal(t, twoFaLoginStepFirst.Status, http.StatusOK)
 	assert.Empty(t, twoFaLoginStepFirst.Data)
@@ -264,7 +218,7 @@ func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {
 	return userByJWTInfo
 }
 
-func registerUser(t *testing.T, userInput *dto.Register) models.User {
+func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) models.User {
 	i := dto.Register{
 		Password: UserPassword,
 	}
@@ -278,7 +232,7 @@ func registerUser(t *testing.T, userInput *dto.Register) models.User {
 	if err != nil {
 		panic(err)
 	}
-	body, statusCode := post(t, "/api/v1/security/register", byteBody, nil)
+	body, statusCode := post(t, ts.URL+"/api/v1/security/register", byteBody, nil)
 
 	newCreatedUser := models.User{}
 	err = json.Unmarshal(body, &newCreatedUser)
@@ -293,21 +247,4 @@ func registerUser(t *testing.T, userInput *dto.Register) models.User {
 	}
 
 	return newCreatedUser
-}
-
-func marshalBodyGeneric[T any](m T) []byte {
-	byteBody, err := json.Marshal(m)
-	if err != nil {
-		panic(err)
-	}
-	return byteBody
-}
-
-func unmarshalBodyGeneric[T any](body []byte, m T) T {
-	err := json.Unmarshal(body, &m)
-	if err != nil {
-		panic(err)
-	}
-
-	return m
 }

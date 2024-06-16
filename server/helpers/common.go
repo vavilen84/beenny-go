@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/vavilen84/beenny-go/constants"
@@ -138,4 +139,21 @@ func GetMigrationsFolder() string {
 
 func GetFixturesFolder() string {
 	return path.Join(os.Getenv("APP_ROOT"), "fixtures")
+}
+
+func MarshalGeneric[T any](m T) []byte {
+	byteBody, err := json.Marshal(m)
+	if err != nil {
+		panic(err)
+	}
+	return byteBody
+}
+
+func UnmarshalGeneric[T any](body []byte, m T) T {
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		panic(err)
+	}
+
+	return m
 }
