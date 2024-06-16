@@ -85,6 +85,64 @@ func loginUser(t *testing.T, ts *httptest.Server) string {
 	return jwtTok
 }
 
+func performRequestBase(req *http.Request, t *testing.T, authToken *string) ([]byte, int) {
+	if authToken != nil {
+		req.Header.Add("Authorization", "Bearer "+*authToken)
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Error sending request:", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Failed to read response body: %v", err)
+	}
+
+	return body, resp.StatusCode
+}
+
+func performRequest(req *http.Request, t *testing.T, authToken *string) ([]byte, int) {
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	return performRequestBase(req, t, authToken)
+}
+
+func deleteRequest(t *testing.T, url string, authToken *string) ([]byte, int) {
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	return performRequest(req, t, authToken)
+}
+
+func post(t *testing.T, url string, byteBody []byte, authToken *string) ([]byte, int) {
+	req, err := http.NewRequest("POST", url, bytes.NewReader(byteBody))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	return performRequest(req, t, authToken)
+}
+
+func put(t *testing.T, url string, byteBody []byte, authToken *string) ([]byte, int) {
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(byteBody))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	return performRequest(req, t, authToken)
+}
+
+func get(t *testing.T, url string, authToken *string) ([]byte, int) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	return performRequest(req, t, authToken)
+}
+
 func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 	db := store.GetDB()
 	u, err := models.FindUserByEmail(db, test.TestUserEmail)
@@ -204,4 +262,35 @@ func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {
 	}
 
 	return userByJWTInfo
+}
+
+func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) models.User {
+	i := dto.Register{
+		Password: UserPassword,
+	}
+	if userInput != nil {
+		i = *userInput
+	} else {
+		i = getBaseRegisterInput()
+	}
+
+	byteBody, err := json.Marshal(i)
+	if err != nil {
+		panic(err)
+	}
+	body, statusCode := post(t, "/register", byteBody, nil)
+
+	newCreatedUser := models.User{}
+	err = json.Unmarshal(body, &newCreatedUser)
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, i.Email, newCreatedUser.Email)
+	assert.NotEmpty(t, newCreatedUser.Id)
+
+	if statusCode != http.StatusOK {
+		t.Errorf("Expected status code %d but got %d", http.StatusOK, statusCode)
+	}
+
+	return newCreatedUser
 }
