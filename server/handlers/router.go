@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/vavilen84/beenny-go/constants"
+	appMiddleware "github.com/vavilen84/beenny-go/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -54,12 +55,12 @@ func BuildV1Paths() *chi.Mux {
 		r.Post("/reset-password", c.ResetPassword)
 		r.Get("/verify-email", c.VerifyEmail)
 
-		r.With(UserAuth).Post("/change-password", c.ChangePassword)
+		r.With(appMiddleware.UserAuth).Post("/change-password", c.ChangePassword)
 	})
 	r.Route("/user", func(r chi.Router) {
 		c := UserController{}
 
-		r.With(UserAuth).Post("/upload-preview-image", c.UploadPreviewImage)
+		r.With(appMiddleware.UserAuth).Post("/upload-preview-image", c.UploadPreviewImage)
 	})
 	return r
 }
