@@ -1,10 +1,9 @@
-package handlers_security
+package handlers
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/anaskhan96/go-password-encoder"
 	"github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
@@ -16,22 +15,22 @@ import (
 	"net/http"
 )
 
-func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Request) {
-	db := store.GetDB()
+func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	dtoModel := dto.TwoFaLoginStepOne{}
+	dtoModel := dto.ForgotPassword{}
 	err := dec.Decode(&dtoModel)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	err = validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepOne, dtoModel)
+	err = validation.ValidateByScenario(constants.ScenarioForgotPassword, dtoModel)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
+	db := store.GetDB()
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
@@ -43,24 +42,15 @@ func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Re
 		}
 		return
 	}
-
-	passwordIsValid := password.Verify(dtoModel.Password, u.PasswordSalt, u.Password, nil)
-	if !passwordIsValid {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.UnauthorizedError, http.StatusUnauthorized)
-		return
-	}
-
-	token := helpers.GenerateRandomString(6)
-	u.EmailTwoFaCode = token
-	err = models.SetEmailTwoFaCode(db, u)
+	token := u.SetForgotPasswordData()
+	err = models.ForgotPassword(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
 
-	err = aws.SendLoginTwoFaCode(u.Email, token)
+	err = aws.SendResetPasswordEmail(u.Email, token)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusInternalServerError)

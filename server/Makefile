@@ -7,3 +7,5 @@ migrate-test-db:
 make-migration:
 	go run main.go migration-create $(name)
 
+run-all-tests:
+	go test ./... -v -count=1 -failfast -cover -timeout 60m

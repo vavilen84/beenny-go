@@ -1,4 +1,4 @@
-package handlers_security
+package handlers
 
 import (
 	"encoding/json"

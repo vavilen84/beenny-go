@@ -1,4 +1,4 @@
-package handlers_security_test
+package handlers_test
 
 import (
 	"github.com/anaskhan96/go-password-encoder"

@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/joho/godotenv v1.5.1
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.2
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.2
@@ -29,7 +30,6 @@ require (
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect

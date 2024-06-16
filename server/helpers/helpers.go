@@ -29,7 +29,7 @@ func LogFatal(i interface{}) {
 	case string:
 		err = errors.New(i.(string))
 	default:
-		msg := fmt.Sprintf("log fatal: %v")
+		msg := fmt.Sprintf("log fatal: %v", i)
 		err = errors.New(msg)
 	}
 
