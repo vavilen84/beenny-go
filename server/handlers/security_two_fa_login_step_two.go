@@ -33,7 +33,7 @@ func (c *SecurityController) TwoFaLoginStepTwo(w http.ResponseWriter, r *http.Re
 	u, err := models.FindUserByTwoFAToken(db, dtoModel.EmailTwoFaCode)
 	if err != nil {
 		helpers.LogError(err)
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = errors.New("user not found")
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {

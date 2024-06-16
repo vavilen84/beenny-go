@@ -40,7 +40,7 @@ func UserAuth(next http.Handler) http.Handler {
 		u, err := models.FindUserById(db, jwtInfo.UserId)
 		if err != nil {
 			helpers.LogError(err)
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				err = errors.New(fmt.Sprintf("user with email %s not found", jwtInfo.User.Email))
 				helpers.LogError(err)
 				http.Error(w, http.StatusText(404), 404)

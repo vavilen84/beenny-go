@@ -19,7 +19,7 @@ func (c *SecurityController) VerifyEmail(w http.ResponseWriter, r *http.Request)
 	u, err := models.FindUserByTwoFAToken(db, token)
 	if err != nil {
 		helpers.LogError(err)
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = errors.New("user not found")
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {

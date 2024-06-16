@@ -34,7 +34,7 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = errors.New(fmt.Sprintf("user with email %s not found", dtoModel.Email))
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {

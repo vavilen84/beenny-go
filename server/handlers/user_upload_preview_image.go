@@ -30,7 +30,7 @@ func (c *UserController) UploadPreviewImage(w http.ResponseWriter, r *http.Reque
 	_, err := models.FindUserById(db, u.Id)
 	if err != nil {
 		helpers.LogError(err)
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = errors.New(fmt.Sprintf("user with id %d not found", u.Id))
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {

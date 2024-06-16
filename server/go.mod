@@ -1,6 +1,6 @@
 module github.com/vavilen84/beenny-go
 
-go 1.20
+go 1.22.4
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0

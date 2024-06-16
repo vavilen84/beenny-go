@@ -32,7 +32,7 @@ func (c *SecurityController) ResetPassword(w http.ResponseWriter, r *http.Reques
 	u, err := models.FindUserByResetPasswordToken(db, dtoModel.Token)
 	if err != nil {
 		helpers.LogError(err)
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = errors.New("user not found")
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {
