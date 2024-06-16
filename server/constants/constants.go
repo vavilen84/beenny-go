@@ -82,6 +82,4 @@ const (
 	ScenarioSetUserPhoto      = "set-user-photo"
 	ScenarioTwoFaLoginStepOne = "two-fa-login-step-one"
 	ScenarioTwoFaLoginStepTwo = "two-fa-login-step-two"
-
-	RegisterUserURL = "/api/v1/security/register"
 )

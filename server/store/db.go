@@ -1,8 +1,6 @@
 package store
 
 import (
-	"database/sql"
-	"github.com/vavilen84/beenny-go/env"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"os"
@@ -21,35 +19,24 @@ func InitTestDB() {
 	db = initTestDb()
 }
 
+func InitSQLServerConnection() {
+	db = initSqlServerConnection()
+}
+
 func GetDB() *gorm.DB {
 	return db
 }
 
 func initDb() *gorm.DB {
-	DbDsn := os.Getenv("DB_SQL_DSN")
-	return processInitDb(DbDsn)
+	return processInitDb(os.Getenv("DB_SQL_DSN"))
 }
 
 func initTestDb() *gorm.DB {
-	DbDsn := os.Getenv("TEST_DB_SQL_DSN")
-	return processInitDb(DbDsn)
+	return processInitDb(os.Getenv("TEST_DB_SQL_DSN"))
 }
 
-func SetMockDb(mockDb *gorm.DB) {
-	db = mockDb
-}
-
-func GetMockDB(db *sql.DB) (gormDB *gorm.DB) {
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		SkipInitializeWithVersion: true,
-		Conn:                      db,
-	}), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	gormDB = gormDB.Session(&gorm.Session{SkipDefaultTransaction: true})
-
-	return
+func initSqlServerConnection() *gorm.DB {
+	return processInitDb(os.Getenv("SQL_SERVER_DSN"))
 }
 
 func processInitDb(DbDsn string) (db *gorm.DB) {
@@ -57,10 +44,11 @@ func processInitDb(DbDsn string) (db *gorm.DB) {
 	if err != nil {
 		panic("failed to database: " + err.Error())
 	}
-	if env.IsDevelopmentEnv() {
-		db.Debug()
-	}
+	db.Debug()
 	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
 
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
 	sqlDB.SetMaxIdleConns(10)

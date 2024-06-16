@@ -7,9 +7,31 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/vavilen84/beenny-go/aws"
 	"github.com/vavilen84/beenny-go/mocks"
-	"github.com/vavilen84/beenny-go/test"
 	"testing"
 )
+
+type SesError struct {
+	error
+	OrgigErrorData string
+	MessageData    string
+	CodeData       string
+}
+
+func (s SesError) Code() string {
+	return s.CodeData
+}
+
+func (s SesError) Message() string {
+	return s.MessageData
+}
+
+func (s SesError) OrigErr() error {
+	return nil
+}
+
+func (s SesError) Error() string {
+	return s.Message()
+}
 
 func Test_SendResetPasswordEmail(t *testing.T) {
 	mockSESclient := mocks.NewSESClient(t)
@@ -46,7 +68,7 @@ func Test_notOk(t *testing.T) {
 	aws.SetSESClient(mockSESclient)
 
 	var sesErr awserr.Error
-	sesErr = test.SesError{
+	sesErr = SesError{
 		CodeData: ses.ErrCodeMessageRejected,
 	}
 

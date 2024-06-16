@@ -2,11 +2,13 @@ package handlers_test
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/vavilen84/beenny-go/handlers"
 	"github.com/vavilen84/beenny-go/helpers"
 	"github.com/vavilen84/beenny-go/models"
 	"github.com/vavilen84/beenny-go/store"
 	"gorm.io/gorm"
 	"log"
+	"net/http/httptest"
 	"os"
 )
 
@@ -47,7 +49,7 @@ func beforeEachTest() {
 }
 
 func clearTestDb() error {
-	store.InitTestDB()
+	store.InitSQLServerConnection()
 	db := store.GetDB()
 	db.Exec("DROP DATABASE beenny_test")
 	err := db.Exec("CREATE DATABASE beenny_test").Error
@@ -76,4 +78,10 @@ func migrate() {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func makeTestServer() *httptest.Server {
+	handler := handlers.MakeHandler()
+	ts := httptest.NewServer(handler)
+	return ts
 }

@@ -20,9 +20,9 @@ func getBaseRegisterInput() dto.Register {
 		CountryOfBirth:  "UA",
 		Gender:          constants.GenderMale,
 		Timezone:        "Pacific/Midway",
-		Birthday:        "01-01-1984",
+		Birthday:        "1984-01-23",
+		Photo:           "/2024/01/23/s09d8fs09dfu.jpg",
 		AgreeTerms:      true,
-		Photo:           "example.jpg",
 		Password:        UserPassword,
 		ConfirmPassword: UserPassword,
 	}

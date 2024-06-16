@@ -264,7 +264,7 @@ func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {
 	return userByJWTInfo
 }
 
-func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) models.User {
+func registerUser(t *testing.T, userInput *dto.Register) models.User {
 	i := dto.Register{
 		Password: UserPassword,
 	}
@@ -278,7 +278,7 @@ func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) mo
 	if err != nil {
 		panic(err)
 	}
-	body, statusCode := post(t, "/register", byteBody, nil)
+	body, statusCode := post(t, "/api/v1/security/register", byteBody, nil)
 
 	newCreatedUser := models.User{}
 	err = json.Unmarshal(body, &newCreatedUser)
@@ -293,4 +293,21 @@ func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) mo
 	}
 
 	return newCreatedUser
+}
+
+func marshalBodyGeneric[T any](m T) []byte {
+	byteBody, err := json.Marshal(m)
+	if err != nil {
+		panic(err)
+	}
+	return byteBody
+}
+
+func unmarshalBodyGeneric[T any](body []byte, m T) T {
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		panic(err)
+	}
+
+	return m
 }
