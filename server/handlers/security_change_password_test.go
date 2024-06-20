@@ -1,7 +1,9 @@
 package handlers_test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/beenny-go/constants"
 	"github.com/vavilen84/beenny-go/dto"
 	"github.com/vavilen84/beenny-go/helpers"
 	"net/http"
@@ -10,7 +12,7 @@ import (
 
 func Test_ChangePassword_NotAuthorized(t *testing.T) {
 	beforeEachTest()
-	return
+
 	ts := makeTestServer()
 	registerUser(t, ts, nil)
 
@@ -20,10 +22,34 @@ func Test_ChangePassword_NotAuthorized(t *testing.T) {
 	}
 
 	bodyBytes, statusCode := post(t, ts.URL+"/api/v1/security/change-password", helpers.MarshalGeneric(body), nil)
-	resp := dto.Response{}
+	resp := dto.ErrorResponse{}
 	resp = helpers.UnmarshalGeneric(bodyBytes, resp)
 	assert.Equal(t, http.StatusUnauthorized, statusCode)
-	assert.Equal(t, resp.Errors[0], "Unauthorized")
+	assert.Equal(t, resp.Error, "Unauthorized")
+}
+
+func Test_ChangePassword_validationErrors(t *testing.T) {
+	beforeEachTest()
+
+	ts := makeTestServer()
+	registerUser(t, ts, nil)
+	token := loginUser(t, ts, testUserEmail, testUserPassword)
+
+	body := dto.ChangePassword{
+		OldPassword: "",
+		NewPassword: "",
+	}
+
+	bodyBytes, statusCode := post(t, ts.URL+"/api/v1/security/change-password", helpers.MarshalGeneric(body), &token)
+	resp := dto.ErrorResponse{}
+	resp = helpers.UnmarshalGeneric(bodyBytes, resp)
+	assert.Equal(t, http.StatusBadRequest, statusCode)
+	mustHaveErrors := []string{
+		fmt.Sprintf(constants.RequiredErrorMsg, "OldPassword"),
+		fmt.Sprintf(constants.RequiredErrorMsg, "NewPassword"),
+	}
+	ok := helpers.AllErrorsExist(mustHaveErrors, resp.Errors)
+	assert.True(t, ok)
 }
 
 func Test_ChangePassword_NotValidPassword(t *testing.T) {

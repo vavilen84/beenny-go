@@ -220,7 +220,7 @@ func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {
 
 func registerUser(t *testing.T, ts *httptest.Server, userInput *dto.Register) models.User {
 	i := dto.Register{
-		Password: UserPassword,
+		Password: testUserPassword,
 	}
 	if userInput != nil {
 		i = *userInput

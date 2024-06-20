@@ -6,16 +6,16 @@ import (
 )
 
 const (
-	UserPassword   = "testTEST123*"
-	UserEmail      = "user@example.com"
-	AdminUserEmail = "admin@example.com"
+	testUserPassword   = "testTEST123*"
+	testUserEmail      = "user@beenny.com"
+	testAdminUserEmail = "admin@example.com"
 )
 
 func getBaseRegisterInput() dto.Register {
 	return dto.Register{
 		FirstName:       "John",
 		LastName:        "Dou",
-		Email:           UserEmail,
+		Email:           testUserEmail,
 		CurrentCountry:  "US",
 		CountryOfBirth:  "UA",
 		Gender:          constants.GenderMale,
@@ -23,7 +23,7 @@ func getBaseRegisterInput() dto.Register {
 		Birthday:        "1984-01-23",
 		Photo:           "/2024/01/23/s09d8fs09dfu.jpg",
 		AgreeTerms:      true,
-		Password:        UserPassword,
-		ConfirmPassword: UserPassword,
+		Password:        testUserPassword,
+		ConfirmPassword: testUserPassword,
 	}
 }

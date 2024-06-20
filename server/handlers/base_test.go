@@ -41,22 +41,21 @@ func beforeEachTest() {
 		}
 		testAppInited = true
 	}
-	err := clearTestDb()
-	if err != nil {
-		panic(err)
-	}
+	clearTestDb()
 	migrate()
 }
 
-func clearTestDb() error {
+func clearTestDb() {
 	store.InitSQLServerConnection()
 	db := store.GetDB()
-	db.Exec("DROP DATABASE beenny_test")
-	err := db.Exec("CREATE DATABASE beenny_test").Error
+	err := db.Exec("DROP DATABASE beenny_test").Error
 	if err != nil {
 		panic(err)
 	}
-	return err
+	err = db.Exec("CREATE DATABASE beenny_test").Error
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getAppPath() string {
@@ -68,7 +67,7 @@ func getAppPath() string {
 }
 
 func migrate() {
-	store.InitDB()
+	store.InitTestDB()
 	db := store.GetDB()
 	err := models.CreateMigrationsTableIfNotExists(db)
 	if err != nil {
