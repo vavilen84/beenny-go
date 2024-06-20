@@ -10,29 +10,24 @@ import (
 type BaseController struct{}
 
 func (*BaseController) WriteSuccessResponse(w http.ResponseWriter, data []byte, status int) {
-	resp := dto.Response{
-		Data: data,
-	}
-	helpers.WriteResponse(w, helpers.MarshalGeneric(resp), status)
+	helpers.WriteResponse(w, data, status)
 }
 
-func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err interface{}, status int) {
-	resp := dto.Response{}
-	e, ok := err.(error)
+func (*BaseController) WriteErrorResponse(w http.ResponseWriter, i interface{}, status int) {
+	resp := dto.ErrorResponse{}
+	e, ok := i.(error)
 	if ok {
 		helpers.LogError(e)
-	}
-	ok = false
-	errorsSlice := make([]string, 0)
-	errs, ok := err.(validation.Errors)
-	if ok {
-		resp = dto.Response{
-			Errors: errs,
+		resp = dto.ErrorResponse{
+			Error: e.Error(),
 		}
-	} else {
-		errorsSlice = append(errorsSlice, e.Error())
-		resp = dto.Response{
-			Errors: errorsSlice,
+		helpers.WriteResponse(w, helpers.MarshalGeneric(resp), status)
+		return
+	}
+	errs, ok := i.(validation.Errors)
+	if ok {
+		resp = dto.ErrorResponse{
+			Errors: errs,
 		}
 	}
 	helpers.WriteResponse(w, helpers.MarshalGeneric(resp), status)

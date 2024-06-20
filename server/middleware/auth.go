@@ -14,10 +14,8 @@ import (
 )
 
 func writeResponse(w http.ResponseWriter, status int, payload string) {
-	var errs []string
-	errs = append(errs, payload)
-	resp := dto.Response{
-		Errors: errs,
+	resp := dto.ErrorResponse{
+		Error: payload,
 	}
 	helpers.WriteResponse(w, helpers.MarshalGeneric(resp), status)
 }

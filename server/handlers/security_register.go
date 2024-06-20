@@ -39,10 +39,12 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
-		helpers.LogError(err)
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
-			return
+			helpers.LogError(err)
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
+				return
+			}
 		}
 	} else {
 		err := errors.New(fmt.Sprintf(constants.UserAlreadyRegisteredFormat, dtoModel.Email))
